@@ -41,3 +41,8 @@ This repository currently contains the public-facing static landing page and bas
 ## Important
 
 Before public launch, replace placeholder contact addresses such as `hello@mystory.example` with the final project email and review all policy text for the actual production workflow.
+
+
+## Landing page v2
+
+Updated with a real sample story preview, 5-step product flow, FAQ, clearer positioning, and early-access messaging.

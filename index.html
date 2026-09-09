@@ -4,38 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="My Story turns your photos and memories into personalized illustrated stories." />
-  <title>My Story — Your memories, reimagined</title>
+  <title>My Story — Your memories. Reimagined.</title>
   <style>
     :root{
-      --bg:#0d1020;
-      --panel:#151a31;
-      --text:#f7f7fb;
-      --muted:#b9bfd6;
-      --accent:#8b7cf6;
-      --accent2:#e16bc3;
-      --line:rgba(255,255,255,.10);
-      --shadow:0 24px 80px rgba(0,0,0,.35);
+      --bg:#0d1020; --panel:#151a31; --panel2:#11162a;
+      --text:#f7f7fb; --muted:#b9bfd6; --accent:#8b7cf6; --accent2:#e16bc3;
+      --line:rgba(255,255,255,.10); --shadow:0 24px 80px rgba(0,0,0,.34);
       --radius:24px;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at 15% 0%, rgba(139,124,246,.22), transparent 34%),
-        radial-gradient(circle at 90% 10%, rgba(225,107,195,.18), transparent 30%),
+        radial-gradient(circle at 15% 0%, rgba(139,124,246,.18), transparent 34%),
+        radial-gradient(circle at 90% 10%, rgba(225,107,195,.15), transparent 30%),
         var(--bg);
       line-height:1.5;
     }
     a{color:inherit}
-    .wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+    .wrap{width:min(1160px,calc(100% - 40px));margin:auto}
     header{
-      position:sticky;top:0;z-index:10;
-      backdrop-filter:blur(16px);
-      background:rgba(13,16,32,.72);
-      border-bottom:1px solid var(--line);
+      position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);
+      background:rgba(13,16,32,.76);border-bottom:1px solid var(--line)
     }
     nav{height:72px;display:flex;align-items:center;justify-content:space-between}
     .brand{font-weight:800;letter-spacing:-.03em;font-size:1.25rem}
@@ -43,78 +35,70 @@
     .navlinks{display:flex;gap:22px;align-items:center}
     .navlinks a{text-decoration:none;color:var(--muted);font-size:.95rem}
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:13px 18px;border-radius:999px;text-decoration:none;font-weight:700;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:white;border:0;box-shadow:0 10px 30px rgba(139,124,246,.25);
+      display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:999px;
+      text-decoration:none;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;border:0;box-shadow:0 10px 30px rgba(139,124,246,.25)
     }
-    .btn.secondary{
-      background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--text)
-    }
-    .hero{padding:96px 0 64px}
-    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+    .btn.secondary{background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--text)}
+    .hero{padding:94px 0 62px}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
     .eyebrow{
-      display:inline-flex;padding:7px 12px;border:1px solid var(--line);
-      border-radius:999px;color:#d6d2ff;background:rgba(255,255,255,.035);font-size:.88rem
+      display:inline-flex;padding:7px 12px;border:1px solid var(--line);border-radius:999px;
+      color:#d6d2ff;background:rgba(255,255,255,.035);font-size:.88rem
     }
-    h1{font-size:clamp(3rem,7vw,6.1rem);line-height:.93;letter-spacing:-.065em;margin:20px 0 22px}
+    h1{font-size:clamp(3rem,7vw,6.2rem);line-height:.93;letter-spacing:-.065em;margin:20px 0 22px}
     h1 em{font-style:normal;color:#c6bcff}
-    .lead{font-size:1.2rem;color:var(--muted);max-width:670px}
+    .lead{font-size:1.18rem;color:var(--muted);max-width:680px}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
     .micro{font-size:.88rem;color:#8f96b3;margin-top:14px}
-    .storybook{
-      min-height:520px;border:1px solid var(--line);border-radius:34px;padding:22px;
-      background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.025));
-      box-shadow:var(--shadow);transform:rotate(1.5deg)
-    }
-    .page{
-      min-height:476px;border-radius:24px;padding:28px;position:relative;overflow:hidden;
-      background:
-        linear-gradient(180deg,rgba(11,14,28,.10),rgba(11,14,28,.72)),
-        radial-gradient(circle at 65% 30%, rgba(255,218,175,.35), transparent 24%),
-        linear-gradient(135deg,#5947a8 0%,#9c5f8f 46%,#dc9b67 100%);
-    }
-    .page:after{
-      content:"";position:absolute;inset:auto -70px -90px -70px;height:230px;
-      background:linear-gradient(180deg,#2b214c,#101326);border-radius:50% 50% 0 0/25% 25% 0 0
-    }
-    .cover-tag{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:#f3eaff}
-    .cover-title{font-size:3.1rem;line-height:1;letter-spacing:-.05em;margin:18px 0;max-width:320px}
-    .cover-copy{max-width:310px;color:#f7eefe}
-    .stars{position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:40px 40px;opacity:.18}
+    .cover-card{border:1px solid var(--line);border-radius:34px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.025));box-shadow:var(--shadow);transform:rotate(1deg)}
+    .cover-card img{display:block;width:100%;border-radius:24px}
     section{padding:72px 0}
     .section-title{font-size:clamp(2.1rem,4vw,3.7rem);letter-spacing:-.045em;margin:0 0 14px}
-    .section-copy{color:var(--muted);max-width:700px;margin:0 0 36px}
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    .card{
-      padding:24px;border:1px solid var(--line);border-radius:var(--radius);
-      background:rgba(255,255,255,.035)
-    }
-    .num{font-size:.82rem;color:#bcb4ff;text-transform:uppercase;letter-spacing:.12em}
-    .card h3{font-size:1.25rem;margin:12px 0 8px}
-    .card p{margin:0;color:var(--muted)}
+    .section-copy{color:var(--muted);max-width:760px;margin:0 0 34px}
+    .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+    .card{padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.035)}
+    .num{font-size:.78rem;color:#bcb4ff;text-transform:uppercase;letter-spacing:.12em}
+    .card h3{font-size:1.08rem;margin:10px 0 7px}
+    .card p{margin:0;color:var(--muted);font-size:.93rem}
+    .sample-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start}
+    .sample-feature{border:1px solid var(--line);border-radius:28px;padding:18px;background:var(--panel2);box-shadow:var(--shadow)}
+    .sample-feature img{width:100%;display:block;border-radius:18px}
+    .sample-copy{padding:12px 2px}
+    .sample-copy h3{font-size:1.7rem;margin:6px 0 10px}
+    .sample-copy p{color:var(--muted)}
+    .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .thumb{border:1px solid var(--line);border-radius:22px;padding:10px;background:rgba(255,255,255,.025)}
+    .thumb img{width:100%;display:block;border-radius:14px}
     .ideas{display:flex;gap:10px;flex-wrap:wrap}
     .pill{border:1px solid var(--line);border-radius:999px;padding:10px 14px;color:#d9dded;background:rgba(255,255,255,.03)}
-    .pricing{
-      display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch
-    }
-    .price-card{
-      padding:30px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)
-    }
+    .pricing{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .price-card{padding:30px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
     .price{font-size:3.2rem;font-weight:800;letter-spacing:-.05em}
     .price small{font-size:1rem;color:var(--muted);font-weight:500}
     ul{padding-left:20px;color:var(--muted)}
+    .faq{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    details{border:1px solid var(--line);border-radius:20px;padding:18px 20px;background:rgba(255,255,255,.028)}
+    summary{cursor:pointer;font-weight:700}
+    details p{color:var(--muted);margin-bottom:0}
+    .cta-band{border:1px solid var(--line);border-radius:30px;padding:36px;background:linear-gradient(135deg,rgba(139,124,246,.15),rgba(225,107,195,.10));display:flex;justify-content:space-between;gap:30px;align-items:center}
+    .cta-band h3{font-size:2rem;margin:0 0 8px}
+    .cta-band p{margin:0;color:var(--muted)}
     .notice{font-size:.9rem;color:#939ab6}
     footer{border-top:1px solid var(--line);padding:28px 0 40px;color:#8f96b3;font-size:.9rem}
     .footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     .footer-links{display:flex;gap:18px;flex-wrap:wrap}
-    @media (max-width:820px){
+    @media (max-width:980px){
+      .cards{grid-template-columns:1fr 1fr}
+      .sample-grid,.hero-grid,.pricing,.faq{grid-template-columns:1fr}
+      .cover-card{transform:none}
+    }
+    @media (max-width:700px){
       .navlinks a:not(.btn){display:none}
-      .hero{padding-top:64px}
-      .hero-grid,.pricing{grid-template-columns:1fr}
+      .hero{padding-top:62px}
       .cards{grid-template-columns:1fr}
-      .storybook{min-height:430px;transform:none}
-      .page{min-height:386px}
+      .thumbs{grid-template-columns:1fr 1fr}
+      .cta-band{flex-direction:column;align-items:flex-start}
     }
   </style>
 </head>
@@ -125,8 +109,9 @@
       <div class="brand">My <span>Story</span></div>
       <div class="navlinks">
         <a href="#how">How it works</a>
-        <a href="#ideas">Story ideas</a>
+        <a href="#sample">Sample</a>
         <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
         <a class="btn" href="#pricing">Create your story</a>
       </div>
     </nav>
@@ -139,22 +124,40 @@
       <div>
         <div class="eyebrow">Personalized illustrated stories from your own memories</div>
         <h1>Your memories.<br><em>Reimagined.</em></h1>
-        <p class="lead">
-          Upload a few photos, tell us the moment you want to remember, and My Story transforms it into a unique illustrated story made for you.
-        </p>
+        <p class="lead">Upload a few photos, tell us the moment you want to remember, and My Story transforms it into a unique illustrated story made for you.</p>
         <div class="actions">
           <a class="btn" href="#pricing">Create your first story</a>
-          <a class="btn secondary" href="#how">See how it works</a>
+          <a class="btn secondary" href="#sample">See a real sample</a>
         </div>
-        <div class="micro">Digital delivery · Personalized for you · No subscription required</div>
+        <div class="micro">One story. One payment. No subscription.</div>
       </div>
+      <div class="cover-card">
+        <img src="assets/samples/cover.png" alt="The Summer We Saved the Moon sample cover" />
+      </div>
+    </div>
+  </section>
 
-      <div class="storybook" aria-label="Example illustrated story cover">
-        <div class="page">
-          <div class="stars"></div>
-          <div class="cover-tag">A My Story original</div>
-          <div class="cover-title">The Summer We Saved the Moon</div>
-          <div class="cover-copy">A family holiday becomes a cinematic illustrated adventure — starring the people who were actually there.</div>
+  <section id="sample">
+    <div class="wrap">
+      <h2 class="section-title">See what a finished My Story can look like.</h2>
+      <p class="section-copy">This sample shows the intended product experience: a complete illustrated narrative, not just a single AI image or avatar.</p>
+      <div class="sample-grid">
+        <div class="sample-feature">
+          <img src="assets/samples/page-1.png" alt="Sample story page" />
+          <div class="sample-copy">
+            <div class="num">Sample story</div>
+            <h3>The Summer We Saved the Moon</h3>
+            <p>A family memory reimagined as a warm, cinematic illustrated adventure.</p>
+            <div class="actions">
+              <a class="btn" href="My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">View sample PDF</a>
+            </div>
+          </div>
+        </div>
+        <div class="thumbs">
+          <div class="thumb"><img src="assets/samples/page-2.png" alt="Sample story page 2"></div>
+          <div class="thumb"><img src="assets/samples/page-3.png" alt="Sample story page 3"></div>
+          <div class="thumb"><img src="assets/samples/page-4.png" alt="Sample story page 4"></div>
+          <div class="thumb"><img src="assets/samples/cover.png" alt="Sample story cover"></div>
         </div>
       </div>
     </div>
@@ -162,24 +165,14 @@
 
   <section id="how">
     <div class="wrap">
-      <h2 class="section-title">Three steps. One story that is yours.</h2>
-      <p class="section-copy">My Story is designed as an automated digital product: you provide the memories, the app guides you through the creative choices, and your finished story is delivered digitally.</p>
+      <h2 class="section-title">From photos to story in five simple steps.</h2>
+      <p class="section-copy">The product is being built as an automated digital experience. Customers provide their own inputs and receive a personalized digital story.</p>
       <div class="cards">
-        <div class="card">
-          <div class="num">Step 01</div>
-          <h3>Add your people</h3>
-          <p>Upload a few photos of the people, pets or places that should appear in the story.</p>
-        </div>
-        <div class="card">
-          <div class="num">Step 02</div>
-          <h3>Choose the story</h3>
-          <p>Birthday adventure, family holiday, love story, childhood memory, superhero mission — or your own idea.</p>
-        </div>
-        <div class="card">
-          <div class="num">Step 03</div>
-          <h3>Get your illustrated story</h3>
-          <p>Receive a personalized digital story you can keep, share or give as a gift.</p>
-        </div>
+        <div class="card"><div class="num">Step 01</div><h3>Upload photos</h3><p>Add the people, pets or places that should appear in the story.</p></div>
+        <div class="card"><div class="num">Step 02</div><h3>Choose a story</h3><p>Pick a theme such as family adventure, birthday or love story.</p></div>
+        <div class="card"><div class="num">Step 03</div><h3>Tell us the moment</h3><p>Add names, place, occasion and the details that make it personal.</p></div>
+        <div class="card"><div class="num">Step 04</div><h3>Preview</h3><p>Review the title, story direction and key scenes before generation.</p></div>
+        <div class="card"><div class="num">Step 05</div><h3>Download</h3><p>Receive the finished illustrated digital story or book-ready PDF.</p></div>
       </div>
     </div>
   </section>
@@ -189,16 +182,9 @@
       <h2 class="section-title">Made for moments worth keeping.</h2>
       <p class="section-copy">Not another avatar generator. My Story turns a real memory, relationship or occasion into a complete personalized narrative.</p>
       <div class="ideas">
-        <span class="pill">Birthday</span>
-        <span class="pill">Anniversary</span>
-        <span class="pill">Family adventure</span>
-        <span class="pill">Our love story</span>
-        <span class="pill">Kids' adventure</span>
-        <span class="pill">Vacation memory</span>
-        <span class="pill">Best friends</span>
-        <span class="pill">Pet story</span>
-        <span class="pill">Father's Day</span>
-        <span class="pill">Christmas</span>
+        <span class="pill">Birthday</span><span class="pill">Anniversary</span><span class="pill">Family adventure</span>
+        <span class="pill">Our love story</span><span class="pill">Kids' adventure</span><span class="pill">Vacation memory</span>
+        <span class="pill">Best friends</span><span class="pill">Pet story</span><span class="pill">Father's Day</span><span class="pill">Christmas</span>
       </div>
     </div>
   </section>
@@ -209,29 +195,53 @@
       <p class="section-copy">Early-access pricing for the first version of My Story.</p>
       <div class="pricing">
         <div class="price-card">
-          <div class="num">Starter</div>
-          <h3>My Story</h3>
+          <div class="num">Starter</div><h3>My Story</h3>
           <div class="price">$9.99 <small>one time</small></div>
           <ul>
-            <li>Personalized illustrated story</li>
-            <li>Digital delivery</li>
+            <li>Personalized illustrated digital story</li>
             <li>Multiple story themes</li>
             <li>Made from your own photos and memories</li>
+            <li>Digital delivery</li>
           </ul>
-          <a class="btn" href="mailto:hello@mystory.example?subject=My%20Story%20Early%20Access">Join early access</a>
+          <a class="btn" href="#early-access">Join early access</a>
         </div>
         <div class="price-card">
-          <div class="num">Coming next</div>
-          <h3>Story Book</h3>
+          <div class="num">Extended</div><h3>Story Book</h3>
           <div class="price">$19.99 <small>planned</small></div>
           <ul>
             <li>Longer story format</li>
+            <li>More scenes and customization</li>
             <li>High-resolution book-ready PDF</li>
             <li>Gift-ready cover</li>
-            <li>More scenes and customization</li>
           </ul>
-          <p class="notice">Checkout will be enabled after payment-provider approval. Prices and included features may change during early access.</p>
+          <p class="notice">Checkout will be enabled after payment-provider approval. Final features may change during early access.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2 class="section-title">Frequently asked questions</h2>
+      <div class="faq">
+        <details><summary>How many photos do I need?</summary><p>The planned MVP flow will ask for a small set of clear reference photos, typically 3–6 images.</p></details>
+        <details><summary>Will the illustrated characters look exactly like us?</summary><p>The goal is recognizable, consistent illustrated characters, but the result is a creative interpretation rather than a photographic replica.</p></details>
+        <details><summary>How long does generation take?</summary><p>Generation time will depend on story length and image processing. The final delivery time will be shown before purchase.</p></details>
+        <details><summary>What do I receive?</summary><p>A digital illustrated story. A higher-resolution book-ready PDF is planned as an extended option.</p></details>
+        <details><summary>Do you keep my photos?</summary><p>Production retention rules are still being finalized. The product is being designed to minimize storage and use photos only for creating the requested story.</p></details>
+        <details><summary>Can I make a story as a gift?</summary><p>Yes. Birthdays, anniversaries, family memories and special occasions are core use cases for My Story.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="early-access">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <h3>My Story is currently in early development.</h3>
+          <p>We're building the first end-to-end version now. Checkout will be enabled after payment-provider approval.</p>
+        </div>
+        <a class="btn" href="mailto:hello@mystory.example?subject=My%20Story%20Early%20Access">Join early access</a>
       </div>
     </div>
   </section>
