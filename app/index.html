@@ -28,7 +28,7 @@
 
     <ol class="step-list">
       <li class="active" data-step="1" data-title="Choose format"><span>1</span><b>Format</b></li>
-      <li data-step="2" data-title="Choose source"><span>2</span><b>Source</b></li>
+      <li data-step="2" data-title="Your photos"><span>2</span><b>Photos?</b></li>
       <li data-step="3" data-title="Add photos"><span>3</span><b>Photos</b></li>
       <li data-step="4" data-title="Describe memory"><span>4</span><b>Memory</b></li>
       <li data-step="5" data-title="Review plan"><span>5</span><b>Plan</b></li>
@@ -90,23 +90,23 @@
       <div class="panel-head">
         <div>
           <div class="kicker">Step 2 of 6</div>
-          <h2>Choose source</h2>
-          <p>Use event photos if you have them.</p>
+          <h2>Do you have photos from the moment?</h2>
+          <p>If you do, use them. They help us keep the real people, place and atmosphere.</p>
         </div>
       </div>
 
       <div class="source-grid">
         <button class="source-card selected" data-source="event" type="button">
           <div class="source-icon">◫</div>
-          <strong>Event photos</strong>
-          <p>Photos from the actual moment.</p>
+          <strong>Yes, I do</strong>
+          <p>Use photos from the actual moment.</p>
           <span class="choose-mark">Selected</span>
         </button>
 
         <button class="source-card" data-source="reconstruct" type="button">
           <div class="source-icon">＋</div>
-          <strong>References only</strong>
-          <p>One photo per person when the moment was not photographed.</p>
+          <strong>No, recreate it</strong>
+          <p>Use reference photos of the people and, optionally, the place.</p>
           <span class="choose-mark">Choose</span>
         </button>
       </div>
@@ -178,7 +178,7 @@
         <div>
           <div class="kicker">Step 4 of 6</div>
           <h2>Describe the memory</h2>
-          <p>A few words are enough. The photos handle the visuals.</p>
+          <p>The photos show what happened. Tell us what you want to remember about how it felt.</p>
         </div>
       </div>
 
@@ -189,8 +189,8 @@
         <label>Place
           <input id="place" type="text" placeholder="e.g. Kotor, Montenegro">
         </label>
-        <label class="full">What happened?
-          <textarea id="memory" rows="5" placeholder="e.g. Aqua park during the day, open-air cinema in the evening."></textarea>
+        <label class="full">What do you remember most?
+          <textarea id="memory" rows="5" placeholder="What happened — and what made it feel special? A joke, a small detail, the mood, the excitement, the chaos..."></textarea>
         </label>
         <label>Creative direction
           <select id="theme">
@@ -237,16 +237,16 @@
           </div>
           <span class="auto-badge">Auto-planned</span>
         </div>
-        <div class="synopsis-title">Synopsis</div>
+        <div class="synopsis-title">Your memory, reimagined</div>
         <p class="synopsis" id="previewSynopsis"></p>
       </div>
 
       <div id="snapshotPlan">
         <div class="concept-grid">
-          <div class="concept-box"><span class="mini-label">Source</span><strong id="snapSource"></strong></div>
-          <div class="concept-box"><span class="mini-label">Action</span><strong id="snapAction"></strong></div>
-          <div class="concept-box"><span class="mini-label">Framing</span><strong id="snapFraming"></strong></div>
-          <div class="concept-box"><span class="mini-label">Visual anchor</span><strong id="snapAnchor"></strong></div>
+          <div class="concept-box"><span class="mini-label">How we’ll use your photos</span><strong id="snapSource"></strong></div>
+          <div class="concept-box"><span class="mini-label">The moment</span><strong id="snapAction"></strong></div>
+          <div class="concept-box"><span class="mini-label">How we’ll see it</span><strong id="snapFraming"></strong></div>
+          <div class="concept-box"><span class="mini-label">Detail to remember</span><strong id="snapAnchor"></strong></div>
         </div>
       </div>
 
