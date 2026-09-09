@@ -15,7 +15,7 @@
   </a>
   <div class="top-actions">
     <a class="back-link" href="../index.html">← Back to My Story</a>
-    <div class="status-pill">Functional Demo v0.4</div>
+    <div class="status-pill">App v0.7 · Live Planner</div>
   </div>
 </header>
 
@@ -24,21 +24,21 @@
     <div class="side-intro">
       <div class="eyebrow">Create yours</div>
       <h1 id="sideTitle">Start with a format.</h1>
-      <p id="sideText">Choose a single illustrated Snapshot or a complete multi-page My Story.</p>
+      <p id="sideText">Choose Snapshot or My Story, then tell us whether you already have a photo from the moment.</p>
     </div>
 
-    <ol class="step-list" id="stepList">
+    <ol class="step-list">
       <li class="active" data-step="1"><span>1</span><b>Format</b></li>
-      <li data-step="2"><span>2</span><b>People</b></li>
-      <li data-step="3"><span>3</span><b>Style</b></li>
+      <li data-step="2"><span>2</span><b>Source</b></li>
+      <li data-step="3"><span>3</span><b>Photos</b></li>
       <li data-step="4"><span>4</span><b>Moment</b></li>
-      <li data-step="5"><span>5</span><b>Preview</b></li>
+      <li data-step="5"><span>5</span><b>Plan</b></li>
       <li data-step="6"><span>6</span><b>Result</b></li>
     </ol>
 
     <div class="demo-note">
-      <strong>Demo mode</strong>
-      <span>Your selections work locally in the browser. Final artwork uses the prepared sample until the AI backend is connected.</span>
+      <strong>v0.7 · Live AI Planner</strong>
+      <span>Use real event photos whenever possible; reconstruct only when needed. AI then builds the creative plan.</span>
     </div>
   </aside>
 
@@ -51,7 +51,7 @@
         <div>
           <div class="kicker">Step 1 of 6</div>
           <h2>What do you want to create?</h2>
-          <p>Pick the format first. The rest of the flow adapts to your choice.</p>
+          <p>One illustrated moment, or a complete four-scene story.</p>
         </div>
       </div>
 
@@ -62,12 +62,7 @@
             <span class="format-price">$9.99</span>
           </div>
           <h3>One moment. Reimagined.</h3>
-          <p>One finished personalized illustration based on your people, photos and memory.</p>
-          <ul>
-            <li>1 final illustrated scene</li>
-            <li>High-resolution digital delivery</li>
-            <li>Ideal for sharing, gifting or printing</li>
-          </ul>
+          <p>One personalized final illustration based on your photo or reconstructed scene.</p>
           <span class="choose-mark">Selected ✓</span>
         </button>
 
@@ -77,14 +72,23 @@
             <span class="format-price">$19.99</span>
           </div>
           <h3>Your memory, turned into a story.</h3>
-          <p>A personalized multi-page illustrated narrative delivered as a PDF.</p>
-          <ul>
-            <li>Personalized cover</li>
-            <li>4 illustrated story scenes in the MVP</li>
-            <li>Downloadable PDF</li>
-          </ul>
+          <p>A cover and four deliberately different illustrated scenes delivered as a PDF.</p>
           <span class="choose-mark">Choose</span>
         </button>
+      </div>
+
+      <div id="storyModeBlock" class="story-mode hidden">
+        <div class="kicker">Story mode</div>
+        <div class="mode-grid">
+          <button class="mode-card selected" data-mode="Easy" type="button">
+            <strong>Easy</strong>
+            <span>AI proposes the synopsis and all 4 scenes. Accept or regenerate.</span>
+          </button>
+          <button class="mode-card" data-mode="Guided" type="button">
+            <strong>Guided</strong>
+            <span>AI proposes the scenes, then you can change a scene or add a scene-specific photo.</span>
+          </button>
+        </div>
       </div>
 
       <div class="actions right">
@@ -92,61 +96,93 @@
       </div>
     </section>
 
-    <!-- 2 PEOPLE -->
+    <!-- 2 SOURCE -->
     <section class="panel" data-panel="2">
-      <div class="panel-head split">
+      <div class="panel-head">
         <div>
           <div class="kicker">Step 2 of 6</div>
-          <h2>Who should appear?</h2>
-          <p>Add 1–5 people. One clear reference photo is required; a second is optional.</p>
+          <h2>Do you have a photo from the moment?</h2>
+          <p>This determines the simplest way to build your result.</p>
         </div>
-        <button class="secondary-btn compact" id="addPersonBtn" type="button">+ Add person</button>
       </div>
 
-      <div class="people-list" id="peopleList"></div>
+      <div class="source-grid">
+        <button class="source-card selected" data-source="event" type="button">
+          <div class="source-icon">◫</div>
+          <strong>Yes, I have event photos</strong>
+          <p>Best option. The photo already gives us the people, place, clothes, atmosphere and relationships.</p>
+          <span class="choose-mark">Selected ✓</span>
+        </button>
 
-      <div class="tip">Use a clear face photo. Different angles help, but are not required for the demo.</div>
+        <button class="source-card" data-source="reconstruct" type="button">
+          <div class="source-icon">＋</div>
+          <strong>No, build it from references</strong>
+          <p>Use one reference photo per person, plus an optional place photo and description.</p>
+          <span class="choose-mark">Choose</span>
+        </button>
+      </div>
 
       <div class="actions">
         <button class="secondary-btn" data-back="1" type="button">Back</button>
-        <button class="primary-btn" id="peopleContinueBtn" type="button">Continue</button>
+        <button class="primary-btn" data-next="3" type="button">Continue</button>
       </div>
     </section>
 
-    <!-- 3 STYLE -->
+    <!-- 3 PHOTOS -->
     <section class="panel" data-panel="3">
-      <div class="panel-head">
-        <div>
-          <div class="kicker">Step 3 of 6</div>
-          <h2 id="styleHeading">Choose the mood.</h2>
-          <p>Select the creative direction. This affects the story concept and illustration tone.</p>
+      <div id="eventPath">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Step 3 of 6</div>
+            <h2>Upload the moment.</h2>
+            <p>Add 1–3 photos from the actual event. One strong image is enough.</p>
+          </div>
+        </div>
+
+        <label class="big-upload">
+          <span class="big-upload-icon">＋</span>
+          <strong>Select event photos</strong>
+          <small>1–3 images · JPG / PNG</small>
+          <input id="eventPhotos" type="file" accept="image/*" multiple hidden>
+        </label>
+        <div id="eventPreview" class="photo-preview-grid"></div>
+
+        <div class="input-tip">
+          <strong>Why this is the preferred path</strong>
+          <span>One real photo can already anchor faces, clothing, place and atmosphere — fewer inputs, fewer variables.</span>
         </div>
       </div>
 
-      <div class="theme-grid" id="themeGrid">
-        <button class="theme-card selected" data-theme="Family Adventure" type="button">
-          <span>✦</span><strong>Family Adventure</strong><small>Warm, cinematic and slightly magical.</small>
-        </button>
-        <button class="theme-card" data-theme="Birthday" type="button">
-          <span>★</span><strong>Birthday</strong><small>Celebratory, personal and gift-ready.</small>
-        </button>
-        <button class="theme-card" data-theme="Love Story" type="button">
-          <span>♡</span><strong>Love Story</strong><small>Romantic, elegant and emotional.</small>
-        </button>
-        <button class="theme-card" data-theme="Kids Adventure" type="button">
-          <span>☄</span><strong>Kids Adventure</strong><small>Playful, heroic and imaginative.</small>
-        </button>
-        <button class="theme-card" data-theme="Vacation Memory" type="button">
-          <span>⌁</span><strong>Vacation Memory</strong><small>Turn a real trip into a keepsake.</small>
-        </button>
-        <button class="theme-card" data-theme="Pet Story" type="button">
-          <span>◇</span><strong>Pet Story</strong><small>Whimsical and built around your pet.</small>
-        </button>
+      <div id="reconstructPath" class="hidden">
+        <div class="panel-head split">
+          <div>
+            <div class="kicker">Step 3 of 6</div>
+            <h2>Build the missing moment.</h2>
+            <p>Add 1–5 people. One reference photo per person is enough.</p>
+          </div>
+          <button class="secondary-btn compact" id="addPersonBtn" type="button">+ Add person</button>
+        </div>
+
+        <div id="peopleList" class="people-list"></div>
+
+        <div class="reconstruct-place">
+          <label>
+            Place description
+            <input id="placeDescription" type="text" placeholder="e.g. Small seaside restaurant overlooking the Adriatic">
+          </label>
+
+          <label class="place-upload">
+            <strong>Place photo</strong>
+            <span>Optional</span>
+            <input id="placePhoto" type="file" accept="image/*">
+          </label>
+          <div id="placePreview" class="single-place-preview"></div>
+        </div>
       </div>
 
       <div class="actions">
         <button class="secondary-btn" data-back="2" type="button">Back</button>
-        <button class="primary-btn" data-next="4" type="button">Continue</button>
+        <button class="primary-btn" id="photosContinueBtn" type="button">Continue</button>
       </div>
     </section>
 
@@ -155,26 +191,32 @@
       <div class="panel-head">
         <div>
           <div class="kicker">Step 4 of 6</div>
-          <h2>Tell us the moment.</h2>
-          <p>A few useful details are enough. You can also add up to 5 context photos.</p>
+          <h2>Tell us what matters about this moment.</h2>
+          <p>Keep it simple. The photos carry the visual information; your words tell us what the memory means.</p>
         </div>
       </div>
 
       <div class="form-grid">
-        <label>
-          Occasion
-          <input id="occasion" type="text" placeholder="e.g. Summer holiday">
+        <label>Occasion
+          <input id="occasion" type="text" placeholder="e.g. Summer holiday, 10th birthday">
         </label>
-        <label>
-          Place
-          <input id="place" type="text" placeholder="e.g. Amalfi Coast, Italy">
+        <label>Place
+          <input id="place" type="text" placeholder="e.g. Kotor, Montenegro">
         </label>
-        <label class="full">
-          What happened?
-          <textarea id="memory" rows="5" placeholder="Tell us what you remember. A few sentences are enough."></textarea>
+        <label class="full">What happened?
+          <textarea id="memory" rows="6" placeholder="A few sentences are enough. What happened, why does it matter, and what should the story remember?"></textarea>
         </label>
-        <label>
-          Tone
+        <label>Creative direction
+          <select id="theme">
+            <option>Family Adventure</option>
+            <option>Birthday</option>
+            <option>Love Story</option>
+            <option>Kids Adventure</option>
+            <option>Vacation Memory</option>
+            <option>Pet Story</option>
+          </select>
+        </label>
+        <label>Tone
           <select id="tone">
             <option>Warm</option>
             <option>Funny</option>
@@ -183,70 +225,62 @@
             <option>Emotional</option>
           </select>
         </label>
-        <label id="lengthLabel">
-          Story length
-          <select id="length">
-            <option selected>4 scenes</option>
-            <option>6 scenes</option>
-            <option>8 scenes</option>
-          </select>
-        </label>
       </div>
-
-      <div class="memory-upload">
-        <div>
-          <strong>Memory photos</strong>
-          <p>Optional photos of the location, event, objects or atmosphere.</p>
-        </div>
-        <label class="upload-btn">Select photos<input id="memoryPhotos" type="file" accept="image/*" multiple hidden></label>
-      </div>
-      <div class="memory-preview" id="memoryPreview"></div>
 
       <div class="actions">
         <button class="secondary-btn" data-back="3" type="button">Back</button>
-        <button class="primary-btn" id="previewBtn" type="button">Create preview</button>
+        <button class="primary-btn" id="planBtn" type="button">Build AI creative plan</button>
       </div>
     </section>
 
-    <!-- 5 PREVIEW -->
+    <!-- 5 PLAN -->
     <section class="panel" data-panel="5">
       <div class="panel-head">
         <div>
           <div class="kicker">Step 5 of 6</div>
-          <h2>Your generated direction.</h2>
-          <p>Change your inputs or regenerate automatically. No manual design intervention is part of the flow.</p>
+          <h2 id="planHeading">Your creative plan.</h2>
+          <p id="planExplainer">This is what the generation engine will use.</p>
         </div>
       </div>
 
-      <div class="preview-sheet">
+      <div class="synopsis-sheet">
         <div class="preview-header">
           <div>
             <span class="mini-label" id="previewFormat">Snapshot</span>
-            <h3 id="previewTitle">The Summer We Saved the Moon</h3>
+            <h3 id="previewTitle"></h3>
           </div>
-          <span class="auto-badge">Auto-generated</span>
+          <span class="auto-badge">Auto-planned</span>
         </div>
-
+        <div class="synopsis-title">Synopsis</div>
         <p class="synopsis" id="previewSynopsis"></p>
-
-        <div id="snapshotPreview" class="snapshot-concept">
-          <div class="concept-box">
-            <span class="mini-label">Composition</span>
-            <strong id="snapshotComposition">Cinematic family portrait above a glowing coastal town at sunset.</strong>
-          </div>
-          <div class="concept-box">
-            <span class="mini-label">Visual treatment</span>
-            <strong id="snapshotTreatment">Warm illustrated storybook style with subtle magical details.</strong>
-          </div>
-        </div>
-
-        <div id="storyPreview" class="scene-list hidden"></div>
       </div>
+
+      <div id="snapshotPlan">
+        <div class="concept-grid">
+          <div class="concept-box"><span class="mini-label">Source</span><strong id="snapSource"></strong></div>
+          <div class="concept-box"><span class="mini-label">Action</span><strong id="snapAction"></strong></div>
+          <div class="concept-box"><span class="mini-label">Framing</span><strong id="snapFraming"></strong></div>
+          <div class="concept-box"><span class="mini-label">Visual anchor</span><strong id="snapAnchor"></strong></div>
+        </div>
+      </div>
+
+      <div id="storyPlan" class="hidden">
+        <div class="storyboard-toolbar">
+          <div>
+            <strong>4-scene storyboard</strong>
+            <span id="modeBadge">Easy mode</span>
+          </div>
+          <div class="diversity-rule">Keep the same people and visual world; change location, action, framing and visual anchor across scenes.</div>
+        </div>
+        <div id="sceneList" class="scene-list"></div>
+      </div>
+
+      <div id="plannerStatus" class="planner-status hidden"></div>
 
       <div class="actions three">
         <button class="secondary-btn" data-back="4" type="button">Change details</button>
-        <button class="secondary-btn" id="regenerateBtn" type="button">Regenerate</button>
-        <button class="primary-btn" id="generateBtn" type="button">Generate final</button>
+        <button class="secondary-btn" id="regenerateBtn" type="button">Regenerate plan</button>
+        <button class="primary-btn" id="finalBtn" type="button">Generate final</button>
       </div>
     </section>
 
@@ -254,8 +288,8 @@
     <section class="panel" data-panel="6">
       <div id="generatingState" class="generating">
         <div class="loader"></div>
-        <h2 id="generatingTitle">Creating your Snapshot…</h2>
-        <p id="generatingCopy">Combining your people, moment and visual direction.</p>
+        <h2>Preparing generation package…</h2>
+        <p>Locking the references and approved creative plan.</p>
         <div class="fake-progress"><span id="fakeProgress"></span></div>
       </div>
 
@@ -263,48 +297,29 @@
         <div class="result-head">
           <div>
             <div class="kicker">Step 6 of 6</div>
-            <h2 id="resultTitle">Your Snapshot is ready.</h2>
-            <p id="resultSub">Demo output uses our prepared sample artwork while the live AI generation layer is being connected.</p>
+            <h2>Ready for live AI generation.</h2>
+            <p>This v0.6 stops at the correct generation package instead of showing an unrelated fixed result.</p>
           </div>
-          <span class="demo-tag">Demo output</span>
+          <span class="demo-tag">v0.6</span>
         </div>
 
-        <div id="snapshotResult" class="snapshot-result">
-          <div class="art-frame">
-            <img src="../assets/samples/page-1.png" alt="Demo Snapshot">
-          </div>
-          <div class="result-copy">
-            <span class="mini-label">Snapshot</span>
-            <h3 id="snapshotResultTitle">The Summer We Saved the Moon</h3>
-            <p>One personalized illustrated scene, ready for digital delivery.</p>
-          </div>
-        </div>
-
-        <div id="storyResult" class="story-result hidden">
-          <div class="story-carousel">
-            <img src="../assets/samples/cover.png" alt="Story cover">
-            <img src="../assets/samples/page-1.png" alt="Story page 1">
-            <img src="../assets/samples/page-2.png" alt="Story page 2">
-            <img src="../assets/samples/page-3.png" alt="Story page 3">
-            <img src="../assets/samples/page-4.png" alt="Story page 4">
-          </div>
-          <div class="result-copy">
-            <span class="mini-label">My Story</span>
-            <h3 id="storyResultTitle">The Summer We Saved the Moon</h3>
-            <p>Personalized cover + illustrated story pages, delivered as a PDF.</p>
-            <a class="primary-btn link-btn" href="../My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">Open demo PDF</a>
-          </div>
+        <div class="result-placeholder">
+          <span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span>
+          <h3 id="resultPlanTitle"></h3>
+          <p id="resultSummary"></p>
         </div>
 
         <div class="actions">
           <button class="secondary-btn" id="startOverBtn" type="button">Start another</button>
-          <button class="primary-btn" data-back="5" type="button">Back to preview</button>
+          <button class="primary-btn" data-back="5" type="button">Back to plan</button>
         </div>
       </div>
     </section>
+
   </section>
 </main>
 
+<script src="config.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
