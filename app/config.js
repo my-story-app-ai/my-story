@@ -1,22 +1,27 @@
-/* My Story App v0.8 - production AI endpoints */
+/* My Story App v0.9 - production AI endpoints */
 window.MY_STORY_CONFIG = {
   storyPlannerApi: "https://my-story-api-n5z9.vercel.app/api/story-plan",
   snapshotGenerationApi: "https://my-story-api-n5z9.vercel.app/api/snapshot-generate"
 };
 
-/* Upload controls are loaded separately so the existing app flow remains untouched. */
+/* UX helpers are loaded separately so the existing app flow and AI logic stay stable. */
 (() => {
-  if (!document.querySelector('link[href="upload-controls.css"]')) {
+  const styles = ["upload-controls.css", "ux-flow.css"];
+  styles.forEach(href => {
+    if (document.querySelector(`link[href="${href}"]`)) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "upload-controls.css";
+    link.href = href;
     document.head.appendChild(link);
-  }
+  });
 
   window.addEventListener("load", () => {
-    if (document.querySelector('script[src="upload-controls.js"]')) return;
-    const script = document.createElement("script");
-    script.src = "upload-controls.js";
-    document.body.appendChild(script);
+    const scripts = ["upload-controls.js", "ux-flow.js"];
+    scripts.forEach(src => {
+      if (document.querySelector(`script[src="${src}"]`)) return;
+      const script = document.createElement("script");
+      script.src = src;
+      document.body.appendChild(script);
+    });
   }, { once: true });
 })();
