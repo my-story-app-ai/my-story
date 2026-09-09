@@ -1,0 +1,17 @@
+MY STORY — FINAL v0.7 GITHUB PAGES PACKAGE
+
+This package is for the main GitHub Pages repository.
+
+Included:
+- locked v0.5 landing/legal/sample assets
+- v0.6 simplified source-first input flow
+- v0.7 live AI Story Planner frontend
+- production API endpoint configured in app/config.js
+
+Backend remains in the separate GitHub/Vercel project:
+my-story-app-ai/my-story-api
+
+Configured API:
+https://my-story-api-n5z9.vercel.app/api/story-plan
+
+Do not place OPENAI_API_KEY in this repository.

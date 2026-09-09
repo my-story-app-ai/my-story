@@ -1,0 +1,10 @@
+MY STORY FINAL v0.7 — PRE-GITHUB QA
+
+PASS — Local links/assets
+PASS — Production API endpoint
+PASS — No API secret in frontend
+PASS — Frontend JS syntax
+PASS — Required files
+
+Not executed: a billed end-to-end OpenAI planner request.
+The Vercel endpoint itself was already confirmed alive by the browser response: {"error":"POST only"}.

@@ -3,461 +3,323 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="My Story turns your photos and memories into personalized illustrated snapshots and stories." />
-  <title>My Story — Your memories. Reimagined.</title>
-  <style>
-    :root{
-      --paper:#e9dfc8;
-      --paper-2:#f4ecd9;
-      --paper-3:#fffaf0;
-      --ink:#241f1a;
-      --muted:#695f54;
-      --line:#2c2722;
-      --soft-line:rgba(44,39,34,.18);
-      --accent:#b6483e;
-      --accent-dark:#8f342c;
-      --mustard:#d3a54a;
-      --shadow:0 18px 45px rgba(54,41,28,.16);
-      --radius:18px;
-    }
-
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      color:var(--ink);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:
-        linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
-        repeating-linear-gradient(
-          0deg,
-          rgba(70,54,35,.022) 0,
-          rgba(70,54,35,.022) 1px,
-          transparent 1px,
-          transparent 4px
-        ),
-        var(--paper);
-      line-height:1.5;
-    }
-
-    img{max-width:100%;display:block}
-    a{color:inherit}
-    .wrap{width:min(1160px,calc(100% - 32px));margin:auto}
-
-    header{
-      position:sticky;top:0;z-index:30;
-      background:rgba(233,223,200,.92);
-      backdrop-filter:blur(10px);
-      border-bottom:1px solid rgba(44,39,34,.16);
-    }
-
-    nav{height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.04em;font-size:1.2rem}
-    .brand-mark{
-      width:34px;height:34px;border:2px solid var(--line);
-      background:var(--paper-3);display:grid;place-items:center;
-      transform:rotate(-2deg);box-shadow:3px 3px 0 var(--line);
-      font-family:Georgia,serif;font-weight:900;
-    }
-    .navlinks{display:flex;gap:20px;align-items:center}
-    .navlinks a{text-decoration:none;color:var(--muted);font-size:.93rem;font-weight:650}
-    .navlinks a.btn{color:#fff}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      min-height:46px;padding:12px 18px;
-      border:2px solid var(--line);border-radius:10px;
-      background:var(--accent);color:#fff;
-      text-decoration:none;font-weight:800;
-      box-shadow:4px 4px 0 var(--line);
-      transition:.15s ease;
-    }
-    .btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--line)}
-    .btn.secondary{background:var(--paper-3);color:var(--ink)}
-    .btn.small{min-height:40px;padding:9px 14px;font-size:.9rem}
-
-    .hero{padding:58px 0 48px}
-    .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
-    .eyebrow{
-      display:inline-block;padding:7px 10px;border:1px solid var(--line);
-      background:var(--paper-2);font-size:.79rem;font-weight:800;
-      text-transform:uppercase;letter-spacing:.1em;
-    }
-    h1{
-      margin:18px 0 18px;
-      font-family:Georgia,"Times New Roman",serif;
-      font-size:clamp(3.2rem,7vw,6.2rem);
-      line-height:.92;letter-spacing:-.055em;
-    }
-    h1 em{font-style:italic;color:var(--accent-dark)}
-    .lead{font-size:1.15rem;color:var(--muted);max-width:640px}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
-    .micro{margin-top:13px;color:var(--muted);font-size:.87rem}
-
-    .hero-frame{
-      background:var(--paper-3);padding:12px;
-      border:3px solid var(--line);
-      box-shadow:8px 8px 0 rgba(44,39,34,.95);
-      transform:rotate(1deg);
-    }
-    .hero-frame img{border:2px solid var(--line)}
-    .hero-caption{
-      padding:12px 4px 2px;
-      font-family:Georgia,serif;font-weight:700;
-      font-size:1rem;
-    }
-
-    section{padding:62px 0}
-    .section-kicker{
-      text-transform:uppercase;letter-spacing:.12em;
-      font-size:.76rem;font-weight:850;color:var(--accent-dark);
-      margin-bottom:8px;
-    }
-    .section-title{
-      font-family:Georgia,"Times New Roman",serif;
-      font-size:clamp(2.2rem,4vw,3.8rem);
-      line-height:1;letter-spacing:-.04em;
-      margin:0 0 14px;
-    }
-    .section-copy{color:var(--muted);max-width:760px;margin:0 0 28px}
-
-    .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .product-card{
-      background:var(--paper-3);
-      border:3px solid var(--line);
-      box-shadow:7px 7px 0 rgba(44,39,34,.92);
-      padding:24px;position:relative;
-    }
-    .product-card.snapshot{transform:rotate(-.4deg)}
-    .product-card.story{transform:rotate(.4deg)}
-    .product-card h3{
-      font-family:Georgia,serif;font-size:2rem;
-      margin:5px 0 6px;
-    }
-    .product-tagline{font-style:italic;color:var(--muted);margin-bottom:16px}
-    .price{font-size:2.8rem;font-weight:900;letter-spacing:-.05em;margin:8px 0}
-    .price small{font-size:.95rem;font-weight:600;color:var(--muted);letter-spacing:0}
-    .product-card ul{padding-left:20px;color:var(--muted);margin-bottom:22px}
-    .product-card li{margin:8px 0}
-    .ribbon{
-      position:absolute;top:14px;right:-8px;
-      background:var(--mustard);border:2px solid var(--line);
-      padding:6px 10px;font-weight:850;font-size:.75rem;
-      transform:rotate(2deg);box-shadow:3px 3px 0 var(--line);
-    }
-
-    .sample-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
-    .sample-main{
-      background:var(--paper-3);padding:10px;border:3px solid var(--line);
-      box-shadow:7px 7px 0 rgba(44,39,34,.92);
-      transform:rotate(-.5deg);
-    }
-    .sample-main img{border:2px solid var(--line)}
-    .sample-side h3{
-      font-family:Georgia,serif;font-size:2rem;line-height:1.05;margin:0 0 12px;
-    }
-    .sample-side p{color:var(--muted)}
-    .mini-strip{
-      margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;
-    }
-    .mini-panel{
-      background:var(--paper-3);padding:6px;border:2px solid var(--line);
-      aspect-ratio:16/10;overflow:hidden;
-    }
-    .mini-panel img{width:100%;height:100%;object-fit:cover;border:1px solid var(--line)}
-
-    .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    .step{
-      background:rgba(255,250,240,.68);
-      border:2px solid var(--line);padding:18px;
-      min-height:150px;position:relative;
-    }
-    .step-num{
-      font-family:Georgia,serif;font-weight:900;font-size:1.3rem;
-      color:var(--accent-dark);
-    }
-    .step h3{margin:9px 0 6px;font-family:Georgia,serif}
-    .step p{margin:0;color:var(--muted);font-size:.9rem}
-
-    .ideas{display:flex;gap:9px;flex-wrap:wrap}
-    .pill{
-      border:2px solid var(--line);background:var(--paper-3);
-      padding:8px 12px;border-radius:999px;font-weight:700;font-size:.9rem;
-    }
-
-    .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    details{
-      background:rgba(255,250,240,.72);
-      border:2px solid var(--line);
-      padding:16px 18px;
-    }
-    summary{cursor:pointer;font-weight:800}
-    details p{color:var(--muted);margin-bottom:0}
-
-    .launch{
-      background:var(--paper-3);border:3px solid var(--line);
-      box-shadow:7px 7px 0 rgba(44,39,34,.92);
-      padding:28px;display:flex;justify-content:space-between;gap:22px;align-items:center;
-    }
-    .launch h3{font-family:Georgia,serif;font-size:1.8rem;margin:0 0 6px}
-    .launch p{margin:0;color:var(--muted)}
-    .status{
-      white-space:nowrap;border:2px solid var(--line);padding:9px 12px;
-      background:var(--mustard);font-weight:850;
-    }
-
-    footer{
-      border-top:1px solid rgba(44,39,34,.16);
-      padding:26px 0 36px;color:var(--muted);font-size:.9rem
-    }
-    .footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-    .footer-links{display:flex;gap:16px;flex-wrap:wrap}
-    .footer-links a{text-decoration:none}
-
-    @media(max-width:900px){
-      .hero-grid,.product-grid,.sample-layout,.faq{grid-template-columns:1fr}
-      .flow{grid-template-columns:1fr 1fr}
-      .hero-frame{transform:none}
-      .product-card.snapshot,.product-card.story{transform:none}
-    }
-
-    @media(max-width:650px){
-      .wrap{width:min(100% - 20px,1160px)}
-      .navlinks a:not(.btn){display:none}
-      nav{height:62px}
-      .hero{padding:46px 0 36px}
-      h1{font-size:3.25rem}
-      .lead{font-size:1rem}
-      .actions{display:grid;grid-template-columns:1fr}
-      .btn{width:100%}
-      .hero-frame{box-shadow:5px 5px 0 rgba(44,39,34,.92)}
-      section{padding:46px 0}
-      .flow{grid-template-columns:1fr}
-      .mini-strip{grid-template-columns:1fr 1fr}
-      .launch{flex-direction:column;align-items:flex-start}
-      .status{white-space:normal}
-    }
-  </style>
+  <meta name="description" content="Create a personalized illustrated Snapshot or My Story." />
+  <title>Create — My Story</title>
+  <link rel="stylesheet" href="app.css" />
 </head>
 <body>
-
-<header>
-  <div class="wrap">
-    <nav>
-      <div class="brand">
-        <div class="brand-mark">M</div>
-        <div>My Story</div>
-      </div>
-      <div class="navlinks">
-        <a href="#products">Products</a>
-        <a href="#sample">Sample</a>
-        <a href="#how">How it works</a>
-        <a href="#faq">FAQ</a>
-        <a class="btn small" href="app/index.html">Create yours</a>
-      </div>
-    </nav>
+<header class="topbar">
+  <a class="brand" href="../index.html">
+    <span class="brand-mark">M</span>
+    <span>My Story</span>
+  </a>
+  <div class="top-actions">
+    <a class="back-link" href="../index.html">← Back to My Story</a>
+    <div class="status-pill">App v0.7 · Live Planner</div>
   </div>
 </header>
 
-<main>
-
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <div class="eyebrow">Personalized illustrated memories</div>
-        <h1>Your memories.<br><em>Reimagined.</em></h1>
-        <p class="lead">
-          Turn your own photos and memories into a personalized illustrated keepsake —
-          from one unforgettable scene to a complete story.
-        </p>
-        <div class="actions">
-          <a class="btn" href="#products">Choose your format</a>
-          <a class="btn secondary" href="#sample">See a sample</a>
-        </div>
-        <div class="micro">One payment. No subscription. Fully digital.</div>
-      </div>
-
-      <div class="hero-frame">
-        <img src="assets/samples/cover.png" alt="My Story illustrated story example">
-        <div class="hero-caption">A memory, reimagined as something worth keeping.</div>
-      </div>
+<main class="app-shell">
+  <aside class="sidebar">
+    <div class="side-intro">
+      <div class="eyebrow">Create yours</div>
+      <h1 id="sideTitle">Start with a format.</h1>
+      <p id="sideText">Choose Snapshot or My Story, then tell us whether you already have a photo from the moment.</p>
     </div>
-  </section>
 
-  <section id="products">
-    <div class="wrap">
-      <div class="section-kicker">Choose your format</div>
-      <h2 class="section-title">One moment — or the whole story.</h2>
-      <p class="section-copy">
-        Two simple products, depending on how far you want to take the memory.
-      </p>
+    <ol class="step-list">
+      <li class="active" data-step="1"><span>1</span><b>Format</b></li>
+      <li data-step="2"><span>2</span><b>Source</b></li>
+      <li data-step="3"><span>3</span><b>Photos</b></li>
+      <li data-step="4"><span>4</span><b>Moment</b></li>
+      <li data-step="5"><span>5</span><b>Plan</b></li>
+      <li data-step="6"><span>6</span><b>Result</b></li>
+    </ol>
 
-      <div class="product-grid">
-        <article class="product-card snapshot">
-          <div class="section-kicker">Snapshot</div>
-          <h3>One moment. Reimagined.</h3>
-          <div class="product-tagline">A personalized illustrated scene.</div>
-          <div class="price">$9.99 <small>one time</small></div>
-          <ul>
-            <li>1 personalized final illustration</li>
-            <li>Based on your people, photos and memory</li>
-            <li>Digital high-resolution delivery</li>
-            <li>Ideal for gifts, social sharing or printing</li>
-          </ul>
-          <a class="btn" href="app/index.html">Create a Snapshot</a>
-        </article>
-
-        <article class="product-card story">
-          <div class="ribbon">Full story</div>
-          <div class="section-kicker">My Story</div>
-          <h3>Your memory, turned into a story.</h3>
-          <div class="product-tagline">A personalized multi-page illustrated story.</div>
-          <div class="price">$19.99 <small>one time</small></div>
-          <ul>
-            <li>Multi-page illustrated narrative</li>
-            <li>Recurring characters and story arc</li>
-            <li>Personalized cover</li>
-            <li>Delivered as a downloadable PDF</li>
-          </ul>
-          <a class="btn" href="app/index.html">Create My Story</a>
-        </article>
-      </div>
+    <div class="demo-note">
+      <strong>v0.7 · Live AI Planner</strong>
+      <span>Use real event photos whenever possible; reconstruct only when needed. AI then builds the creative plan.</span>
     </div>
-  </section>
+  </aside>
 
-  <section id="sample">
-    <div class="wrap sample-layout">
-      <div class="sample-main">
-        <img src="assets/samples/page-1.png" alt="My Story sample illustrated page">
-      </div>
+  <section class="workspace">
+    <div class="progress"><span id="progressBar"></span></div>
 
-      <div class="sample-side">
-        <div class="section-kicker">Product sample</div>
-        <h3>The Summer We Saved the Moon</h3>
-        <p>
-          Here is a glimpse of a finished illustrated story. Open the full sample only if you want to see the complete four-page experience.
-        </p>
-
-        <div class="mini-strip">
-          <div class="mini-panel"><img src="assets/samples/page-2.png" alt="Sample page preview"></div>
-          <div class="mini-panel"><img src="assets/samples/page-3.png" alt="Sample page preview"></div>
-        </div>
-
-        <div class="actions">
-          <a class="btn" href="My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">View full sample story</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="how">
-    <div class="wrap">
-      <div class="section-kicker">How it works</div>
-      <h2 class="section-title">From your photos to your story.</h2>
-      <p class="section-copy">
-        The experience is fully automated — you provide the people and memory, the app creates the result.
-      </p>
-
-      <div class="flow">
-        <div class="step">
-          <div class="step-num">01</div>
-          <h3>Add people</h3>
-          <p>Upload 1–5 people, with one clear photo each and an optional second reference.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <h3>Choose the format</h3>
-          <p>Pick Snapshot for one scene, or My Story for a complete illustrated PDF.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <h3>Tell us the moment</h3>
-          <p>Add the memory, place, tone and optional context photos.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <h3>Generate</h3>
-          <p>Review the direction, regenerate if needed, and receive the final digital result.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <div class="section-kicker">Story ideas</div>
-      <h2 class="section-title">Made for moments worth keeping.</h2>
-      <div class="ideas">
-        <span class="pill">Birthday</span>
-        <span class="pill">Anniversary</span>
-        <span class="pill">Family adventure</span>
-        <span class="pill">Love story</span>
-        <span class="pill">Kids' adventure</span>
-        <span class="pill">Vacation memory</span>
-        <span class="pill">Best friends</span>
-        <span class="pill">Pet story</span>
-      </div>
-    </div>
-  </section>
-
-  <section id="faq">
-    <div class="wrap">
-      <div class="section-kicker">FAQ</div>
-      <h2 class="section-title">A few useful answers.</h2>
-
-      <div class="faq">
-        <details>
-          <summary>What is the difference between Snapshot and My Story?</summary>
-          <p>Snapshot gives you one final personalized illustration. My Story gives you a complete multi-page illustrated story as a downloadable PDF.</p>
-        </details>
-        <details>
-          <summary>How many people can I add?</summary>
-          <p>You can add 1–5 people. One clear reference photo per person is required, with a second optional image.</p>
-        </details>
-        <details>
-          <summary>Can I add photos of the actual place or event?</summary>
-          <p>Yes. You can add extra memory photos to help describe the place, atmosphere or moment.</p>
-        </details>
-        <details>
-          <summary>Is there any manual design work involved?</summary>
-          <p>No. The product flow is designed to be fully automated. You can change your inputs or regenerate automatically.</p>
-        </details>
-        <details>
-          <summary>Can I use it as a gift?</summary>
-          <p>Yes. Birthdays, anniversaries, trips and family memories are core use cases.</p>
-        </details>
-        <details>
-          <summary>Do I need a subscription?</summary>
-          <p>No. Both products use one-time pricing.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <div class="launch">
+    <!-- 1 FORMAT -->
+    <section class="panel active" data-panel="1">
+      <div class="panel-head">
         <div>
-          <div class="section-kicker">Early development</div>
-          <h3>The first end-to-end version is being built now.</h3>
-          <p>Checkout will be enabled after payment-provider approval.</p>
+          <div class="kicker">Step 1 of 6</div>
+          <h2>What do you want to create?</h2>
+          <p>One illustrated moment, or a complete four-scene story.</p>
         </div>
-        <div class="status">Launching soon</div>
       </div>
-    </div>
-  </section>
 
+      <div class="format-grid">
+        <button class="format-card selected" data-format="Snapshot" type="button">
+          <div class="format-top">
+            <span class="format-label">Snapshot</span>
+            <span class="format-price">$9.99</span>
+          </div>
+          <h3>One moment. Reimagined.</h3>
+          <p>One personalized final illustration based on your photo or reconstructed scene.</p>
+          <span class="choose-mark">Selected ✓</span>
+        </button>
+
+        <button class="format-card" data-format="My Story" type="button">
+          <div class="format-top">
+            <span class="format-label">My Story</span>
+            <span class="format-price">$19.99</span>
+          </div>
+          <h3>Your memory, turned into a story.</h3>
+          <p>A cover and four deliberately different illustrated scenes delivered as a PDF.</p>
+          <span class="choose-mark">Choose</span>
+        </button>
+      </div>
+
+      <div id="storyModeBlock" class="story-mode hidden">
+        <div class="kicker">Story mode</div>
+        <div class="mode-grid">
+          <button class="mode-card selected" data-mode="Easy" type="button">
+            <strong>Easy</strong>
+            <span>AI proposes the synopsis and all 4 scenes. Accept or regenerate.</span>
+          </button>
+          <button class="mode-card" data-mode="Guided" type="button">
+            <strong>Guided</strong>
+            <span>AI proposes the scenes, then you can change a scene or add a scene-specific photo.</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="actions right">
+        <button class="primary-btn" data-next="2" type="button">Continue</button>
+      </div>
+    </section>
+
+    <!-- 2 SOURCE -->
+    <section class="panel" data-panel="2">
+      <div class="panel-head">
+        <div>
+          <div class="kicker">Step 2 of 6</div>
+          <h2>Do you have a photo from the moment?</h2>
+          <p>This determines the simplest way to build your result.</p>
+        </div>
+      </div>
+
+      <div class="source-grid">
+        <button class="source-card selected" data-source="event" type="button">
+          <div class="source-icon">◫</div>
+          <strong>Yes, I have event photos</strong>
+          <p>Best option. The photo already gives us the people, place, clothes, atmosphere and relationships.</p>
+          <span class="choose-mark">Selected ✓</span>
+        </button>
+
+        <button class="source-card" data-source="reconstruct" type="button">
+          <div class="source-icon">＋</div>
+          <strong>No, build it from references</strong>
+          <p>Use one reference photo per person, plus an optional place photo and description.</p>
+          <span class="choose-mark">Choose</span>
+        </button>
+      </div>
+
+      <div class="actions">
+        <button class="secondary-btn" data-back="1" type="button">Back</button>
+        <button class="primary-btn" data-next="3" type="button">Continue</button>
+      </div>
+    </section>
+
+    <!-- 3 PHOTOS -->
+    <section class="panel" data-panel="3">
+      <div id="eventPath">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Step 3 of 6</div>
+            <h2>Upload the moment.</h2>
+            <p>Add 1–3 photos from the actual event. One strong image is enough.</p>
+          </div>
+        </div>
+
+        <label class="big-upload">
+          <span class="big-upload-icon">＋</span>
+          <strong>Select event photos</strong>
+          <small>1–3 images · JPG / PNG</small>
+          <input id="eventPhotos" type="file" accept="image/*" multiple hidden>
+        </label>
+        <div id="eventPreview" class="photo-preview-grid"></div>
+
+        <div class="input-tip">
+          <strong>Why this is the preferred path</strong>
+          <span>One real photo can already anchor faces, clothing, place and atmosphere — fewer inputs, fewer variables.</span>
+        </div>
+      </div>
+
+      <div id="reconstructPath" class="hidden">
+        <div class="panel-head split">
+          <div>
+            <div class="kicker">Step 3 of 6</div>
+            <h2>Build the missing moment.</h2>
+            <p>Add 1–5 people. One reference photo per person is enough.</p>
+          </div>
+          <button class="secondary-btn compact" id="addPersonBtn" type="button">+ Add person</button>
+        </div>
+
+        <div id="peopleList" class="people-list"></div>
+
+        <div class="reconstruct-place">
+          <label>
+            Place description
+            <input id="placeDescription" type="text" placeholder="e.g. Small seaside restaurant overlooking the Adriatic">
+          </label>
+
+          <label class="place-upload">
+            <strong>Place photo</strong>
+            <span>Optional</span>
+            <input id="placePhoto" type="file" accept="image/*">
+          </label>
+          <div id="placePreview" class="single-place-preview"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="secondary-btn" data-back="2" type="button">Back</button>
+        <button class="primary-btn" id="photosContinueBtn" type="button">Continue</button>
+      </div>
+    </section>
+
+    <!-- 4 MOMENT -->
+    <section class="panel" data-panel="4">
+      <div class="panel-head">
+        <div>
+          <div class="kicker">Step 4 of 6</div>
+          <h2>Tell us what matters about this moment.</h2>
+          <p>Keep it simple. The photos carry the visual information; your words tell us what the memory means.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label>Occasion
+          <input id="occasion" type="text" placeholder="e.g. Summer holiday, 10th birthday">
+        </label>
+        <label>Place
+          <input id="place" type="text" placeholder="e.g. Kotor, Montenegro">
+        </label>
+        <label class="full">What happened?
+          <textarea id="memory" rows="6" placeholder="A few sentences are enough. What happened, why does it matter, and what should the story remember?"></textarea>
+        </label>
+        <label>Creative direction
+          <select id="theme">
+            <option>Family Adventure</option>
+            <option>Birthday</option>
+            <option>Love Story</option>
+            <option>Kids Adventure</option>
+            <option>Vacation Memory</option>
+            <option>Pet Story</option>
+          </select>
+        </label>
+        <label>Tone
+          <select id="tone">
+            <option>Warm</option>
+            <option>Funny</option>
+            <option selected>Magical</option>
+            <option>Adventurous</option>
+            <option>Emotional</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="secondary-btn" data-back="3" type="button">Back</button>
+        <button class="primary-btn" id="planBtn" type="button">Build AI creative plan</button>
+      </div>
+    </section>
+
+    <!-- 5 PLAN -->
+    <section class="panel" data-panel="5">
+      <div class="panel-head">
+        <div>
+          <div class="kicker">Step 5 of 6</div>
+          <h2 id="planHeading">Your creative plan.</h2>
+          <p id="planExplainer">This is what the generation engine will use.</p>
+        </div>
+      </div>
+
+      <div class="synopsis-sheet">
+        <div class="preview-header">
+          <div>
+            <span class="mini-label" id="previewFormat">Snapshot</span>
+            <h3 id="previewTitle"></h3>
+          </div>
+          <span class="auto-badge">Auto-planned</span>
+        </div>
+        <div class="synopsis-title">Synopsis</div>
+        <p class="synopsis" id="previewSynopsis"></p>
+      </div>
+
+      <div id="snapshotPlan">
+        <div class="concept-grid">
+          <div class="concept-box"><span class="mini-label">Source</span><strong id="snapSource"></strong></div>
+          <div class="concept-box"><span class="mini-label">Action</span><strong id="snapAction"></strong></div>
+          <div class="concept-box"><span class="mini-label">Framing</span><strong id="snapFraming"></strong></div>
+          <div class="concept-box"><span class="mini-label">Visual anchor</span><strong id="snapAnchor"></strong></div>
+        </div>
+      </div>
+
+      <div id="storyPlan" class="hidden">
+        <div class="storyboard-toolbar">
+          <div>
+            <strong>4-scene storyboard</strong>
+            <span id="modeBadge">Easy mode</span>
+          </div>
+          <div class="diversity-rule">Keep the same people and visual world; change location, action, framing and visual anchor across scenes.</div>
+        </div>
+        <div id="sceneList" class="scene-list"></div>
+      </div>
+
+      <div id="plannerStatus" class="planner-status hidden"></div>
+
+      <div class="actions three">
+        <button class="secondary-btn" data-back="4" type="button">Change details</button>
+        <button class="secondary-btn" id="regenerateBtn" type="button">Regenerate plan</button>
+        <button class="primary-btn" id="finalBtn" type="button">Generate final</button>
+      </div>
+    </section>
+
+    <!-- 6 RESULT -->
+    <section class="panel" data-panel="6">
+      <div id="generatingState" class="generating">
+        <div class="loader"></div>
+        <h2>Preparing generation package…</h2>
+        <p>Locking the references and approved creative plan.</p>
+        <div class="fake-progress"><span id="fakeProgress"></span></div>
+      </div>
+
+      <div id="resultState" class="hidden">
+        <div class="result-head">
+          <div>
+            <div class="kicker">Step 6 of 6</div>
+            <h2>Ready for live AI generation.</h2>
+            <p>This v0.6 stops at the correct generation package instead of showing an unrelated fixed result.</p>
+          </div>
+          <span class="demo-tag">v0.6</span>
+        </div>
+
+        <div class="result-placeholder">
+          <span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span>
+          <h3 id="resultPlanTitle"></h3>
+          <p id="resultSummary"></p>
+        </div>
+
+        <div class="actions">
+          <button class="secondary-btn" id="startOverBtn" type="button">Start another</button>
+          <button class="primary-btn" data-back="5" type="button">Back to plan</button>
+        </div>
+      </div>
+    </section>
+
+  </section>
 </main>
 
-<footer>
-  <div class="wrap footer-row">
-    <div>© 2026 My Story. Personalized digital storytelling.</div>
-    <div class="footer-links">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="refund.html">Refund policy</a>
-    </div>
-  </div>
-</footer>
-
+<script src="config.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
