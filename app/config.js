@@ -1,7 +1,8 @@
 /* My Story App v0.9 - production AI endpoints */
 window.MY_STORY_CONFIG = {
   storyPlannerApi: "https://my-story-api-n5z9.vercel.app/api/story-plan",
-  snapshotGenerationApi: "https://my-story-api-n5z9.vercel.app/api/snapshot-generate"
+  snapshotGenerationApi: "https://my-story-api-n5z9.vercel.app/api/snapshot-generate",
+  devBypassPayment: false
 };
 
 /* UX helpers are loaded separately so the existing app flow and AI logic stay stable. */

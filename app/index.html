@@ -15,14 +15,14 @@
   </a>
   <div class="top-actions">
     <a class="back-link" href="../index.html">← Back to My Story</a>
-    <div class="status-pill">App v0.8 · Guided Story</div>
+    <div class="status-pill">App v0.8 · Preview funnel</div>
   </div>
 </header>
 
 <main class="app-shell">
   <section class="flow-status">
     <div>
-      <div class="kicker" id="currentStepMeta">Step 1 of 6</div>
+      <div class="kicker" id="currentStepMeta">Step 1 of 7</div>
       <h1 id="currentStepTitle">Choose format</h1>
     </div>
 
@@ -31,8 +31,9 @@
       <li data-step="2" data-title="Your photos"><span>2</span><b>Photos?</b></li>
       <li data-step="3" data-title="Add photos"><span>3</span><b>Photos</b></li>
       <li data-step="4" data-title="Describe memory"><span>4</span><b>Memory</b></li>
-      <li data-step="5" data-title="Review plan"><span>5</span><b>Plan</b></li>
-      <li data-step="6" data-title="Your result"><span>6</span><b>Result</b></li>
+      <li data-step="5" data-title="Free preview"><span>5</span><b>Preview</b></li>
+      <li data-step="6" data-title="Unlock"><span>6</span><b>Unlock</b></li>
+      <li data-step="7" data-title="Your result"><span>7</span><b>Result</b></li>
     </ol>
     <div class="progress"><span id="progressBar"></span></div>
   </section>
@@ -41,7 +42,7 @@
     <div id="plannerStatus" class="planner-status hidden"></div>
 
     <section class="panel active" data-panel="1">
-      <div class="panel-head"><div><div class="kicker">Step 1 of 6</div><h2>Choose format</h2><p>Pick a single image or a short illustrated story.</p></div></div>
+      <div class="panel-head"><div><div class="kicker">Step 1 of 7</div><h2>Choose format</h2><p>Pick a single image or a short illustrated story.</p></div></div>
       <div class="format-grid">
         <button class="format-card selected" data-format="Snapshot" type="button"><span class="format-label">Snapshot</span><h3>1 illustrated image</h3><p>Best for one favorite moment.</p><span class="choose-mark">Selected</span></button>
         <button class="format-card" data-format="My Story" type="button"><span class="format-label">My Story</span><h3>Cover + 4 scenes</h3><p>Best for a memory with a beginning, middle and ending.</p><span class="choose-mark">Choose</span></button>
@@ -57,7 +58,7 @@
     </section>
 
     <section class="panel" data-panel="2">
-      <div class="panel-head"><div><div class="kicker">Step 2 of 6</div><h2>Do you have photos from the moment?</h2><p>If you do, use them. They help us keep the real people, place and atmosphere.</p></div></div>
+      <div class="panel-head"><div><div class="kicker">Step 2 of 7</div><h2>Do you have photos from the moment?</h2><p>If you do, use them. They help us keep the real people, place and atmosphere.</p></div></div>
       <div class="source-grid">
         <button class="source-card selected" data-source="event" type="button"><div class="source-icon">◫</div><strong>Yes, I do</strong><p>Use photos from the actual moment.</p><span class="choose-mark">Selected</span></button>
         <button class="source-card" data-source="reconstruct" type="button"><div class="source-icon">＋</div><strong>No, recreate it</strong><p>Use reference photos of the people and, optionally, the place.</p><span class="choose-mark">Choose</span></button>
@@ -67,13 +68,13 @@
 
     <section class="panel" data-panel="3">
       <div id="eventPath">
-        <div class="panel-head"><div><div class="kicker">Step 3 of 6</div><h2>Add photos</h2><p>Upload 1–3 photos from the actual moment.</p></div></div>
+        <div class="panel-head"><div><div class="kicker">Step 3 of 7</div><h2>Add photos</h2><p>Upload 1–3 photos from the actual moment.</p></div></div>
         <label class="big-upload"><span class="big-upload-icon">＋</span><strong>Select event photos</strong><small>JPG, PNG or WEBP</small><input id="eventPhotos" type="file" accept="image/*" multiple hidden></label>
         <div id="eventPreview" class="photo-preview-grid"></div>
         <div class="input-tip">Event photos help preserve faces, clothing, place and atmosphere.</div>
       </div>
       <div id="reconstructPath" class="hidden">
-        <div class="panel-head split"><div><div class="kicker">Step 3 of 6</div><h2>Add references</h2><p>One clear photo per person.</p></div><button class="secondary-btn compact" id="addPersonBtn" type="button">+ Add person</button></div>
+        <div class="panel-head split"><div><div class="kicker">Step 3 of 7</div><h2>Add references</h2><p>One clear photo per person.</p></div><button class="secondary-btn compact" id="addPersonBtn" type="button">+ Add person</button></div>
         <div id="peopleList" class="people-list"></div>
         <div class="reconstruct-place">
           <label>Place description<input id="placeDescription" type="text" placeholder="e.g. Small seaside restaurant overlooking the Adriatic"></label>
@@ -87,7 +88,7 @@
     <section class="panel" data-panel="4">
       <div class="panel-head">
         <div>
-          <div class="kicker">Step 4 of 6</div>
+          <div class="kicker">Step 4 of 7</div>
           <h2 id="memoryStepHeading">Describe the memory</h2>
           <p id="memoryStepIntro">The photos show what happened. Tell us what you want to remember about how it felt.</p>
         </div>
@@ -130,24 +131,49 @@
         </label>
       </div>
 
-      <div class="actions"><button class="secondary-btn" data-back="3" type="button">Back</button><button class="primary-btn" id="planBtn" type="button">Build AI creative plan</button></div>
+      <div class="actions"><button class="secondary-btn" data-back="3" type="button">Back</button><button class="primary-btn" id="planBtn" type="button">Create free preview</button></div>
     </section>
 
     <section class="panel" data-panel="5">
-      <div class="panel-head"><div><div class="kicker">Step 5 of 6</div><h2 id="planHeading">Review the plan</h2><p id="planExplainer">Approve it or regenerate.</p></div></div>
-      <div class="synopsis-sheet"><div class="preview-header"><div><span class="mini-label" id="previewFormat">Snapshot</span><h3 id="previewTitle"></h3></div><span class="auto-badge">Auto-planned</span></div><div class="synopsis-title">Your memory, reimagined</div><p class="synopsis" id="previewSynopsis"></p></div>
-      <div id="snapshotPlan"><div class="concept-grid"><div class="concept-box"><span class="mini-label">How we’ll use your photos</span><strong id="snapSource"></strong></div><div class="concept-box"><span class="mini-label">The moment</span><strong id="snapAction"></strong></div><div class="concept-box"><span class="mini-label">How we’ll see it</span><strong id="snapFraming"></strong></div><div class="concept-box"><span class="mini-label">Detail to remember</span><strong id="snapAnchor"></strong></div></div></div>
-      <div id="storyPlan" class="hidden"><div class="storyboard-toolbar"><div><strong>4-scene storyboard</strong><span id="modeBadge">Easy mode</span></div><div class="diversity-rule">Same people, varied scenes.</div></div><div id="sceneList" class="scene-list"></div></div>
-      <div class="actions three"><button class="secondary-btn" data-back="4" type="button">Change details</button><button class="secondary-btn" id="regenerateBtn" type="button">Regenerate plan</button><button class="primary-btn" id="finalBtn" type="button">Generate final</button></div>
+      <div class="panel-head"><div><div class="kicker">Step 5 of 7</div><h2 id="previewHeading">Your preview</h2><p id="previewExplainer">A first look at what your memory can become.</p></div></div>
+
+      <div class="public-preview">
+        <div class="preview-header"><div><span class="mini-label" id="previewFormat">Snapshot</span><h3 id="previewTitle"></h3></div><span class="auto-badge">Free preview</span></div>
+        <p class="synopsis" id="previewSynopsis"></p>
+
+        <div id="snapshotPreview" class="preview-facts">
+          <div><span>Concept</span><strong id="previewConcept"></strong></div>
+          <div><span>Mood</span><strong id="previewMood"></strong></div>
+          <div><span>Style</span><strong id="previewStyle"></strong></div>
+        </div>
+
+        <div id="storyPreview" class="preview-scenes hidden"></div>
+      </div>
+
+      <div class="preview-close">
+        <h3>This feels right?</h3>
+        <div class="actions three"><button class="secondary-btn" data-back="4" type="button">Edit memory</button><button class="primary-btn" id="continueToUnlockBtn" type="button">Continue to create</button></div>
+      </div>
     </section>
 
     <section class="panel" data-panel="6">
+      <div class="unlock-card">
+        <div class="panel-head"><div><div class="kicker">Step 6 of 7</div><h2 id="unlockHeading">Unlock your memory</h2><p id="unlockIntro">Checkout integration is coming next.</p></div></div>
+        <ul id="unlockBenefits"></ul>
+        <div class="unlock-price" id="unlockPrice">$9.99 · one-time payment</div>
+        <button class="primary-btn unlock-btn" id="unlockBtn" type="button">Create my Snapshot — $9.99</button>
+        <div id="unlockStatus" class="planner-status hidden"></div>
+        <div class="actions"><button class="secondary-btn" data-back="4" type="button">Back to edit</button></div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="7">
       <div id="generatingState" class="generating"><div class="loader"></div><h2>Generating...</h2><p>This usually takes a moment.</p><div class="fake-progress"><span id="fakeProgress"></span></div></div>
       <div id="resultState" class="hidden">
-        <div class="result-head"><div><div class="kicker">Step 6 of 6</div><h2>Your result</h2><p>Download the image or go back to adjust the plan.</p></div><span class="demo-tag">v0.8</span></div>
+        <div class="result-head"><div><div class="kicker">Step 7 of 7</div><h2>Your result</h2><p>Download the image or go back to adjust the preview.</p></div><span class="demo-tag">v0.8</span></div>
         <div class="result-layout"><div class="generated-frame"><img id="generatedImage" alt=""></div><div class="result-copy"><span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span><h3 id="resultPlanTitle"></h3><p id="resultSummary"></p><a class="primary-btn link-btn hidden" id="downloadImageLink" href="#" download="my-story-snapshot.png">Download image</a></div></div>
         <div id="generationStatus" class="planner-status hidden"></div>
-        <div class="actions"><button class="secondary-btn" id="startOverBtn" type="button">Start another</button><button class="primary-btn" data-back="5" type="button">Back to plan</button></div>
+        <div class="actions"><button class="secondary-btn" id="startOverBtn" type="button">Start another</button><button class="primary-btn" data-back="5" type="button">Back to preview</button></div>
       </div>
     </section>
   </section>

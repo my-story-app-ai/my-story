@@ -1,8 +1,10 @@
 const MAX_EVENT_PHOTOS = 3;
+const MAX_STORY_EVENT_PHOTOS = 5;
 const MAX_PEOPLE = 5;
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 const PLANNER_TIMEOUT_MS = 70000;
 const GENERATION_TIMEOUT_MS = 120000;
+const TOTAL_STEPS = 7;
 
 const state = {
   step: 1,
@@ -13,9 +15,14 @@ const state = {
   sceneOverrides: {},
   scenePhotos: {},
   lastPlan: null,
+  publicPreview: null,
   lastDetails: null,
   lastImages: [],
-  lastSnapshot: null
+  lastSnapshot: null,
+  payment: {
+    status: "not_started",
+    checkoutId: null
+  }
 };
 
 const panels = [...document.querySelectorAll("[data-panel]")];
@@ -24,19 +31,21 @@ const progressBar = document.getElementById("progressBar");
 const peopleList = document.getElementById("peopleList");
 const plannerStatus = document.getElementById("plannerStatus");
 const generationStatus = document.getElementById("generationStatus");
+const unlockStatus = document.getElementById("unlockStatus");
 const currentStepMeta = document.getElementById("currentStepMeta");
 const currentStepTitle = document.getElementById("currentStepTitle");
 const apiUrl = window.MY_STORY_CONFIG?.storyPlannerApi || "/api/story-plan";
 const snapshotApiUrl = window.MY_STORY_CONFIG?.snapshotGenerationApi || "/api/snapshot-generate";
+const devBypassPayment = window.MY_STORY_CONFIG?.devBypassPayment === true;
 
 function gotoStep(step){
   state.step = step;
   panels.forEach(p => p.classList.toggle("active", Number(p.dataset.panel) === step));
   navItems.forEach(n => n.classList.toggle("active", Number(n.dataset.step) === step));
   const activeNav = navItems.find(n => Number(n.dataset.step) === step);
-  currentStepMeta.textContent = `Step ${step} of 6`;
+  currentStepMeta.textContent = `Step ${step} of ${TOTAL_STEPS}`;
   currentStepTitle.textContent = activeNav?.dataset.title || "Create";
-  progressBar.style.width = `${step / 6 * 100}%`;
+  progressBar.style.width = `${step / TOTAL_STEPS * 100}%`;
   window.scrollTo({top:0, behavior:"smooth"});
 }
 
@@ -124,6 +133,10 @@ function syncRemove(){
 document.getElementById("addPersonBtn").addEventListener("click", addPerson);
 addPerson();
 
+function maxEventPhotos(){
+  return state.format==="My Story" ? MAX_STORY_EVENT_PHOTOS : MAX_EVENT_PHOTOS;
+}
+
 function validateImageFile(file){
   const allowed=["image/jpeg","image/png","image/webp"];
   if(!allowed.includes(file.type)) return "Please use JPG, PNG or WEBP images.";
@@ -155,7 +168,7 @@ function renderFiles(input, targetId, max){
   }
 }
 
-document.getElementById("eventPhotos").addEventListener("change",e=>renderFiles(e.target,"eventPreview",MAX_EVENT_PHOTOS));
+document.getElementById("eventPhotos").addEventListener("change",e=>renderFiles(e.target,"eventPreview",maxEventPhotos()));
 document.getElementById("placePhoto").addEventListener("change",e=>renderFiles(e.target,"placePreview",1));
 
 document.getElementById("photosContinueBtn").addEventListener("click", ()=>{
@@ -216,7 +229,7 @@ async function fileToDataUrl(file, maxSide=1280, quality=.78){
 async function collectImages(){
   const images=[];
   if(state.source==="event"){
-    const files=[...document.getElementById("eventPhotos").files].slice(0,MAX_EVENT_PHOTOS);
+    const files=[...document.getElementById("eventPhotos").files].slice(0,maxEventPhotos());
     for(let i=0;i<files.length;i++){
       images.push({
         kind:"event",
@@ -269,6 +282,16 @@ function hideGenerationStatus(){
   generationStatus.classList.add("hidden");
 }
 
+function showUnlockStatus(message,type=""){
+  unlockStatus.className=`planner-status ${type}`.trim();
+  unlockStatus.textContent=message;
+  unlockStatus.classList.remove("hidden");
+}
+
+function hideUnlockStatus(){
+  unlockStatus.classList.add("hidden");
+}
+
 async function fetchJsonWithTimeout(url, options, timeoutMs){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(), timeoutMs);
@@ -312,6 +335,45 @@ function validatePlan(plan, format){
   });
 }
 
+function firstSentence(value="", fallback="A meaningful moment becomes part of the illustrated memory."){
+  const text=String(value || "").replace(/\s+/g," ").trim();
+  if(!text) return fallback;
+  const end=[...text].findIndex(char=>[".","!","?"].includes(char));
+  const sentence=end>=0 ? text.slice(0,end+1) : text;
+  return sentence.length>150 ? `${sentence.slice(0,147).trim()}...` : sentence;
+}
+
+function sceneSummary(scene,index){
+  const fallbacks=[
+    "The memory opens with the people and place that matter most.",
+    "The heart of the moment becomes the center of the story.",
+    "A shift in place, time or activity moves the story forward.",
+    "The story closes with the feeling they will remember later."
+  ];
+  return firstSentence(scene?.action, fallbacks[index] || fallbacks[1]);
+}
+
+function buildPublicPreview(plan, details){
+  if(state.format==="Snapshot"){
+    return {
+      title: plan.title,
+      synopsis: firstSentence(plan.synopsis, "A personal memory becomes one illustrated keepsake."),
+      concept: firstSentence(plan.action, "One favorite moment becomes a personalized illustration."),
+      mood: firstSentence(plan.emotion, details?.tone || "Warm"),
+      styleDirection: [details?.tone, details?.theme].filter(Boolean).join(" ") || "Warm illustrated keepsake"
+    };
+  }
+
+  return {
+    title: plan.title,
+    synopsis: firstSentence(plan.synopsis, "A personal memory becomes a short illustrated story."),
+    scenes: plan.scenes.map((scene,index)=>({
+      title: scene.title,
+      summary: sceneSummary(scene,index)
+    }))
+  };
+}
+
 async function callPlanner(){
   const data=collect();
   if(!data.memory){
@@ -326,7 +388,7 @@ async function callPlanner(){
   try{
     const images=await collectImages();
     if(images.length===0) throw new Error("Please add the required source photo before planning.");
-    showPlannerStatus("Planning your Snapshot...","");
+    showPlannerStatus("Creating your free preview...","");
 
     const payload=await fetchJsonWithTimeout(apiUrl,{
       method:"POST",
@@ -343,97 +405,78 @@ async function callPlanner(){
 
     validatePlan(payload.plan,state.format);
     state.lastPlan=payload.plan;
+    state.publicPreview=buildPublicPreview(payload.plan,data);
     state.lastDetails=data;
     state.lastImages=images;
     state.lastSnapshot=null;
-    renderAIPlan(payload.plan);
+    state.payment={status:"not_started",checkoutId:null};
+    renderPublicPreview(state.publicPreview);
+    configureUnlock();
     gotoStep(5);
-    showPlannerStatus("AI planner completed successfully.","success");
+    showPlannerStatus("Free preview is ready.","success");
   }catch(err){
     console.error(err);
     showPlannerStatus(`AI Story Planner error: ${err.message}`,"error");
   }finally{
     btn.disabled=false;
-    btn.textContent="Build AI creative plan";
+    btn.textContent="Create free preview";
   }
 }
 
-function renderAIPlan(plan){
+function renderPublicPreview(preview){
   const isStory=state.format==="My Story";
+  document.getElementById("previewHeading").textContent=isStory
+    ?"Your story is taking shape"
+    :"Your Snapshot is taking shape";
+  document.getElementById("previewExplainer").textContent=isStory
+    ?"A simple preview of the illustrated story we can create from this memory."
+    :"A simple preview of the final illustration direction.";
   document.getElementById("previewFormat").textContent=state.format;
-  document.getElementById("previewTitle").textContent=plan.title;
-  document.getElementById("previewSynopsis").textContent=plan.synopsis;
-  document.getElementById("snapshotPlan").classList.toggle("hidden",isStory);
-  document.getElementById("storyPlan").classList.toggle("hidden",!isStory);
-  document.getElementById("finalBtn").textContent=isStory ? "Approve storyboard" : "Generate Snapshot";
+  document.getElementById("previewTitle").textContent=preview.title;
+  document.getElementById("previewSynopsis").textContent=preview.synopsis;
 
-  if(!isStory){
-    document.getElementById("planHeading").textContent="Your AI Snapshot direction.";
-    document.getElementById("planExplainer").textContent="Approve or regenerate.";
-    document.getElementById("snapSource").textContent=plan.source_strategy;
-    document.getElementById("snapAction").textContent=plan.action;
-    document.getElementById("snapFraming").textContent=plan.framing;
-    document.getElementById("snapAnchor").textContent=plan.visual_anchor;
-  }else{
-    document.getElementById("planHeading").textContent="AI synopsis + 4-scene storyboard.";
-    document.getElementById("planExplainer").textContent=state.mode==="Easy"
-      ?"Accept or regenerate."
-      :"Adjust scenes, then approve.";
-    document.getElementById("modeBadge").textContent=`${state.mode} mode`;
-    renderScenes(plan.scenes || []);
+  document.getElementById("snapshotPreview").classList.toggle("hidden",isStory);
+  document.getElementById("storyPreview").classList.toggle("hidden",!isStory);
+
+  if(isStory){
+    const list=document.getElementById("storyPreview");
+    list.innerHTML="";
+    preview.scenes.forEach((scene,index)=>{
+      const card=document.createElement("article");
+      card.className="preview-scene-card";
+      card.innerHTML=`
+        <span>${String(index+1).padStart(2,"0")}</span>
+        <h4>${escapeHtml(scene.title)}</h4>
+        <p>${escapeHtml(scene.summary)}</p>
+      `;
+      list.appendChild(card);
+    });
+    return;
   }
+
+  document.getElementById("previewConcept").textContent=preview.concept;
+  document.getElementById("previewMood").textContent=preview.mood;
+  document.getElementById("previewStyle").textContent=preview.styleDirection;
 }
 
-function renderScenes(scenes){
-  const wrap=document.getElementById("sceneList");
-  wrap.innerHTML="";
-  scenes.forEach((s,i)=>{
-    const description=state.sceneOverrides[i] || s.action;
-    const div=document.createElement("article");
-    div.className="scene-card";
-    div.innerHTML=`
-      <div class="scene-number">Scene ${i+1}</div>
-      <h4>${escapeHtml(s.title)}</h4>
-      <p class="scene-description">${escapeHtml(description)}</p>
-      <div class="scene-meta">
-        <div><span>Location</span><b>${escapeHtml(s.location)}</b></div>
-        <div><span>Time</span><b>${escapeHtml(s.time)}</b></div>
-        <div><span>Framing</span><b>${escapeHtml(s.framing)}</b></div>
-        <div><span>Visual anchor</span><b>${escapeHtml(s.visual_anchor)}</b></div>
-      </div>
-      ${s.emotion ? `<div class="scene-meta"><div><span>Emotion</span><b>${escapeHtml(s.emotion)}</b></div></div>` : ""}
-      ${state.mode==="Guided" ? `
-      <div class="guided-tools">
-        <button class="scene-action change-scene" data-index="${i}" type="button">Change scene</button>
-        <label class="scene-action">Add scene photo<input class="scene-photo-input" data-index="${i}" type="file" accept="image/jpeg,image/png,image/webp"></label>
-      </div>
-      <div class="scene-edit-wrap hidden" data-edit="${i}">
-        <textarea class="scene-edit">${escapeHtml(description)}</textarea>
-        <button class="scene-action save-scene" data-index="${i}" type="button">Use this scene</button>
-      </div>
-      <div class="scene-photo-preview" data-photo="${i}"></div>`:""}
-    `;
-    wrap.appendChild(div);
-  });
-
-  if(state.mode==="Guided"){
-    wrap.querySelectorAll(".change-scene").forEach(btn=>btn.addEventListener("click",()=>{
-      wrap.querySelector(`[data-edit="${btn.dataset.index}"]`).classList.toggle("hidden");
-    }));
-    wrap.querySelectorAll(".save-scene").forEach(btn=>btn.addEventListener("click",()=>{
-      const text=wrap.querySelector(`[data-edit="${btn.dataset.index}"] textarea`).value.trim();
-      if(text) state.sceneOverrides[btn.dataset.index]=text;
-      renderScenes(state.lastPlan.scenes);
-    }));
-    wrap.querySelectorAll(".scene-photo-input").forEach(input=>input.addEventListener("change",async ()=>{
-      const file=input.files[0]; if(!file)return;
-      const validation=validateImageFile(file);
-      if(validation){showPlannerStatus(validation,"error");return;}
-      state.scenePhotos[input.dataset.index]=await fileToDataUrl(file);
-      wrap.querySelector(`[data-photo="${input.dataset.index}"]`).innerHTML=
-        `<img src="${URL.createObjectURL(file)}" alt="Scene reference">`;
-    }));
-  }
+function configureUnlock(){
+  const isStory=state.format==="My Story";
+  document.getElementById("unlockHeading").textContent=isStory
+    ?"Your story is ready to be illustrated."
+    :"Your memory is ready to become an illustration.";
+  document.getElementById("unlockIntro").textContent=isStory
+    ?"We have the memory, photo source and story preview. The next step is paid generation."
+    :"We have the memory, photo source and creative preview. The next step is paid generation.";
+  document.getElementById("unlockBenefits").innerHTML=isStory
+    ?"<li>4 illustrated scenes</li><li>Consistent visual storytelling</li><li>Downloadable story PDF</li>"
+    :"<li>1 final illustrated image</li><li>High-resolution download</li><li>Personalized from your photos and memory</li>";
+  document.getElementById("unlockPrice").textContent=isStory
+    ?"$19.99 · one-time payment"
+    :"$9.99 · one-time payment";
+  document.getElementById("unlockBtn").textContent=isStory
+    ?"Create my Story — $19.99"
+    :"Create my Snapshot — $9.99";
+  hideUnlockStatus();
 }
 
 function approvedPackage(){
@@ -443,19 +486,27 @@ function approvedPackage(){
     source:state.source,
     details:state.lastDetails,
     plan:state.lastPlan,
+    publicPreview:state.publicPreview,
     images:state.lastImages,
     sceneOverrides:state.sceneOverrides,
-    scenePhotos:state.scenePhotos
+    scenePhotos:state.scenePhotos,
+    payment:state.payment
   };
 }
 
 async function generateSnapshot(){
   if(!state.lastPlan || !state.lastDetails){
-    showPlannerStatus("Build and approve a creative plan first.","error");
+    showPlannerStatus("Build the free preview first.","error");
     gotoStep(5);
     return;
   }
-  gotoStep(6);
+  if(state.payment.status!=="paid" && !devBypassPayment){
+    configureUnlock();
+    gotoStep(6);
+    showUnlockStatus("Checkout integration is coming next. Generation stays locked until payment is connected.","error");
+    return;
+  }
+  gotoStep(7);
   hideGenerationStatus();
   document.getElementById("generatingState").classList.remove("hidden");
   document.getElementById("resultState").classList.add("hidden");
@@ -510,8 +561,8 @@ function renderStoryApproved(){
   document.getElementById("resultState").classList.remove("hidden");
   document.getElementById("resultFormatLabel").textContent="MY STORY";
   document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
-  document.getElementById("resultSummary").textContent="Storyboard approved for the next generation phase.";
-  showGenerationStatus("Storyboard approved.","success");
+  document.getElementById("resultSummary").textContent="Story generation is gated and ready for the next production phase.";
+  showGenerationStatus("Story generation will be connected after payment and image/PDF generation are wired.","success");
 }
 
 function resetFlow(){
@@ -532,9 +583,11 @@ function resetFlow(){
   state.sceneOverrides={};
   state.scenePhotos={};
   state.lastPlan=null;
+  state.publicPreview=null;
   state.lastDetails=null;
   state.lastImages=[];
   state.lastSnapshot=null;
+  state.payment={status:"not_started",checkoutId:null};
   document.querySelectorAll(".format-card").forEach(card=>{
     const selected=card.dataset.format==="Snapshot";
     card.classList.toggle("selected",selected);
@@ -548,6 +601,7 @@ function resetFlow(){
   });
   hidePlannerStatus();
   hideGenerationStatus();
+  hideUnlockStatus();
   document.getElementById("eventPath").classList.remove("hidden");
   document.getElementById("reconstructPath").classList.add("hidden");
   document.getElementById("storyModeBlock").classList.add("hidden");
@@ -566,13 +620,19 @@ function slugify(value){
 
 document.getElementById("planBtn").addEventListener("click",callPlanner);
 
-document.getElementById("regenerateBtn").addEventListener("click",async ()=>{
-  state.generation++;
-  state.sceneOverrides={};
-  state.scenePhotos={};
-  gotoStep(4);
-  await callPlanner();
+document.getElementById("continueToUnlockBtn").addEventListener("click",()=>{
+  configureUnlock();
+  gotoStep(6);
 });
 
-document.getElementById("finalBtn").addEventListener("click",generateSnapshot);
+document.getElementById("unlockBtn").addEventListener("click",()=>{
+  if(devBypassPayment){
+    generateSnapshot();
+    return;
+  }
+  state.payment.status="not_started";
+  state.payment.checkoutId=null;
+  showUnlockStatus("Checkout integration coming next. No payment has been taken.","");
+});
+
 document.getElementById("startOverBtn").addEventListener("click",resetFlow);
