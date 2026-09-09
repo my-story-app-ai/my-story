@@ -8,7 +8,13 @@
 
   if (!eventInput || !eventPreview || !eventPath || !placeInput || !placePreview || !peopleList) return;
 
-  const MAX_EVENT_PHOTOS = 3;
+  function isStory() {
+    return document.querySelector('.format-card.selected')?.dataset.format === 'My Story';
+  }
+
+  function maxEventPhotos() {
+    return isStory() ? 5 : 3;
+  }
 
   function setFiles(input, files) {
     const dt = new DataTransfer();
@@ -46,7 +52,7 @@
 
       toolbar.querySelector("#eventAddReplaceBtn").addEventListener("click", () => {
         const current = [...eventInput.files];
-        if (current.length >= MAX_EVENT_PHOTOS) {
+        if (current.length >= maxEventPhotos()) {
           eventInput.click();
         } else {
           addInput.value = "";
@@ -64,8 +70,9 @@
         const incoming = [...addInput.files];
         const seen = new Set(existing.map(fileKey));
         const merged = [...existing];
+        const max = maxEventPhotos();
         for (const file of incoming) {
-          if (!seen.has(fileKey(file)) && merged.length < MAX_EVENT_PHOTOS) {
+          if (!seen.has(fileKey(file)) && merged.length < max) {
             merged.push(file);
             seen.add(fileKey(file));
           }
@@ -78,11 +85,19 @@
   }
 
   function renderEventControls() {
-    const files = [...eventInput.files].slice(0, MAX_EVENT_PHOTOS);
+    const max = maxEventPhotos();
+    const allFiles = [...eventInput.files];
+    if (allFiles.length > max) {
+      setFiles(eventInput, allFiles.slice(0, max));
+    }
+    const files = [...eventInput.files].slice(0, max);
     const toolbar = ensureEventToolbar();
     toolbar.classList.toggle("hidden", files.length === 0);
 
-    if (!files.length) return;
+    if (!files.length) {
+      eventPreview.innerHTML = "";
+      return;
+    }
 
     eventPreview.innerHTML = "";
     files.forEach((file, index) => {
@@ -111,6 +126,10 @@
 
   eventInput.addEventListener("change", () => {
     queueMicrotask(renderEventControls);
+  });
+
+  document.querySelectorAll('.format-card').forEach(card => {
+    card.addEventListener('click', () => queueMicrotask(renderEventControls));
   });
 
   function renderPlaceControls() {
