@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Create a personalized illustrated story with My Story." />
+  <title>Create My Story</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../">
+      <span class="brand-mark">M</span>
+      <span>My <strong>Story</strong></span>
+    </a>
+    <div class="status-pill">Demo MVP v0.1.1</div>
+  </header>
+
+  <main class="shell">
+    <aside class="sidebar">
+      <div class="side-copy">
+        <div class="eyebrow">Create your story</div>
+        <h1>Your memory.<br><span>One illustrated adventure.</span></h1>
+        <p>This demo runs entirely in your browser. No uploads are sent anywhere.</p>
+      </div>
+
+      <ol class="steps" id="stepNav">
+        <li class="active" data-step="1"><span>1</span> People</li>
+        <li data-step="2"><span>2</span> Story type</li>
+        <li data-step="3"><span>3</span> The moment</li>
+        <li data-step="4"><span>4</span> Preview</li>
+        <li data-step="5"><span>5</span> Final story</li>
+      </ol>
+    </aside>
+
+    <section class="workspace">
+      <div class="progress"><div id="progressBar"></div></div>
+
+      <!-- STEP 1 -->
+      <section class="panel active" data-panel="1">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Step 1 of 5</div>
+            <h2>Who is this story about?</h2>
+            <p>Add 1–5 people. One clear reference photo per person is enough; a second is optional.</p>
+          </div>
+          <button class="ghost-btn" id="addPersonBtn" type="button">+ Add person</button>
+        </div>
+
+        <div id="peopleList" class="people-list"></div>
+
+        <div class="hint">
+          Tip: use a clear photo where the face is visible. Different angles are helpful, but not required.
+        </div>
+
+        <div class="actions">
+          <span></span>
+          <button class="primary-btn" data-next="2" type="button">Continue</button>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="panel" data-panel="2">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Step 2 of 5</div>
+            <h2>Choose your story.</h2>
+            <p>Pick the type of story you want us to create.</p>
+          </div>
+        </div>
+
+        <div class="theme-grid" id="themeGrid">
+          <button class="theme-card selected" data-theme="Family Adventure" type="button">
+            <span class="theme-icon">✦</span>
+            <strong>Family Adventure</strong>
+            <small>Turn a real family memory into a magical journey.</small>
+          </button>
+          <button class="theme-card" data-theme="Birthday Story" type="button">
+            <span class="theme-icon">★</span>
+            <strong>Birthday Story</strong>
+            <small>A personalized birthday adventure made around them.</small>
+          </button>
+          <button class="theme-card" data-theme="Love Story" type="button">
+            <span class="theme-icon">♡</span>
+            <strong>Love Story</strong>
+            <small>Reimagine your relationship as a cinematic keepsake.</small>
+          </button>
+          <button class="theme-card" data-theme="Kids Adventure" type="button">
+            <span class="theme-icon">☄</span>
+            <strong>Kids Adventure</strong>
+            <small>Make a child the hero of their own illustrated story.</small>
+          </button>
+          <button class="theme-card" data-theme="Vacation Memory" type="button">
+            <span class="theme-icon">⌁</span>
+            <strong>Vacation Memory</strong>
+            <small>Turn a favorite trip into a story you can keep.</small>
+          </button>
+          <button class="theme-card" data-theme="Pet Story" type="button">
+            <span class="theme-icon">◇</span>
+            <strong>Pet Story</strong>
+            <small>A playful illustrated story built around your pet.</small>
+          </button>
+        </div>
+
+        <div class="actions">
+          <button class="secondary-btn" data-back="1" type="button">Back</button>
+          <button class="primary-btn" data-next="3" type="button">Continue</button>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="panel" data-panel="3">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Step 3 of 5</div>
+            <h2>Tell us the moment.</h2>
+            <p>Add the details that make this story yours — plus a few memory photos if you have them.</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            Occasion
+            <input id="occasion" type="text" placeholder="e.g. Summer holiday, 10th birthday, first trip together">
+          </label>
+          <label>
+            Place
+            <input id="place" type="text" placeholder="e.g. Amalfi Coast, Italy">
+          </label>
+          <label class="full">
+            What happened?
+            <textarea id="memory" rows="5" placeholder="Tell us the memory in your own words. A few sentences are enough."></textarea>
+          </label>
+          <label>
+            Tone
+            <select id="tone">
+              <option>Warm</option>
+              <option>Funny</option>
+              <option selected>Magical</option>
+              <option>Adventurous</option>
+              <option>Emotional</option>
+            </select>
+          </label>
+          <label>
+            Story length
+            <select id="length">
+              <option selected>4 scenes</option>
+              <option>6 scenes</option>
+              <option>8 scenes</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="memory-upload">
+          <div>
+            <strong>Add memory photos</strong>
+            <p>Optional context photos of the place, event or moment. Up to 5 images.</p>
+          </div>
+          <label class="upload-btn">
+            Select photos
+            <input id="memoryPhotos" type="file" accept="image/*" multiple hidden>
+          </label>
+        </div>
+        <div id="memoryPreview" class="memory-preview"></div>
+
+        <div class="actions">
+          <button class="secondary-btn" data-back="2" type="button">Back</button>
+          <button class="primary-btn" id="generateOutlineBtn" type="button">Generate story preview</button>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="panel" data-panel="4">
+        <div class="panel-head">
+          <div>
+            <div class="kicker">Step 4 of 5</div>
+            <h2>Your story preview.</h2>
+            <p>Review the direction. You can change your inputs or regenerate a different version automatically.</p>
+          </div>
+        </div>
+
+        <div class="preview-card">
+          <div class="preview-top">
+            <div>
+              <div class="kicker" id="previewTheme">Family Adventure</div>
+              <h3 id="storyTitle">The Summer We Saved the Moon</h3>
+            </div>
+            <span class="ai-badge">Auto-generated</span>
+          </div>
+          <p id="storySynopsis" class="synopsis"></p>
+          <div id="sceneList" class="scene-list"></div>
+        </div>
+
+        <div class="preview-note">
+          There is no manual production or designer intervention in this flow. Changes are made by updating your inputs or regenerating automatically.
+        </div>
+
+        <div class="actions three">
+          <button class="secondary-btn" data-back="3" type="button">Change details</button>
+          <button class="secondary-btn" id="regenerateBtn" type="button">Regenerate</button>
+          <button class="primary-btn" id="generateFinalBtn" type="button">Generate final story</button>
+        </div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="panel" data-panel="5">
+        <div id="generatingState" class="generating">
+          <div class="loader"></div>
+          <h2>Creating your illustrated story…</h2>
+          <p>Building the narrative, matching characters and composing each scene.</p>
+          <div class="fake-progress"><span id="fakeProgressBar"></span></div>
+        </div>
+
+        <div id="finalState" class="final-state hidden">
+          <div class="panel-head">
+            <div>
+              <div class="kicker">Your story is ready</div>
+              <h2 id="finalTitle">The Summer We Saved the Moon</h2>
+              <p>Demo output shown below using our sample illustrated story.</p>
+            </div>
+          </div>
+
+          <div class="final-grid">
+            <img src="../assets/samples/cover.png" alt="Sample cover">
+            <img src="../assets/samples/page-1.png" alt="Sample story page 1">
+            <img src="../assets/samples/page-2.png" alt="Sample story page 2">
+            <img src="../assets/samples/page-3.png" alt="Sample story page 3">
+            <img src="../assets/samples/page-4.png" alt="Sample story page 4">
+          </div>
+
+          <div class="actions">
+            <button class="secondary-btn" data-back="4" type="button">Back to preview</button>
+            <a class="primary-btn link-btn" href="../My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">Open sample PDF</a>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
