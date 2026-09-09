@@ -4,6 +4,29 @@
   display:none!important;
 }
 
+/* Product names are the primary choice; product description is secondary. */
+.format-label{
+  display:block;
+  font-size:1.5rem!important;
+  line-height:1.05;
+  letter-spacing:.06em;
+}
+.format-card h3{
+  font-size:1.12rem!important;
+  line-height:1.2;
+  margin-top:12px!important;
+}
+
+/* The source choice works better without decorative icons. */
+.source-icon{
+  display:none!important;
+}
+
+@media(max-width:700px){
+  .format-label{font-size:1.4rem!important}
+  .format-card h3{font-size:1.08rem!important}
+}
+
 @media (prefers-reduced-motion: reduce){
   *{scroll-behavior:auto!important}
 }
