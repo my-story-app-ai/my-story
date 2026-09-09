@@ -1,0 +1,9 @@
+/* My Story v0.9 UX polish */
+[data-panel="1"] [data-next="2"],
+[data-panel="2"] [data-next="3"]{
+  display:none!important;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{scroll-behavior:auto!important}
+}
