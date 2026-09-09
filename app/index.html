@@ -15,7 +15,7 @@
   </a>
   <div class="top-actions">
     <a class="back-link" href="../index.html">← Back to My Story</a>
-    <div class="status-pill">App v0.7 · Live Planner</div>
+    <div class="status-pill">App v0.8 · Live Snapshot</div>
   </div>
 </header>
 
@@ -37,13 +37,14 @@
     </ol>
 
     <div class="demo-note">
-      <strong>v0.7 · Live AI Planner</strong>
-      <span>Use real event photos whenever possible; reconstruct only when needed. AI then builds the creative plan.</span>
+      <strong>v0.8 · Live Snapshot</strong>
+      <span>Use real event photos whenever possible; AI plans the image, then generates the approved Snapshot.</span>
     </div>
   </aside>
 
   <section class="workspace">
     <div class="progress"><span id="progressBar"></span></div>
+    <div id="plannerStatus" class="planner-status hidden"></div>
 
     <!-- 1 FORMAT -->
     <section class="panel active" data-panel="1">
@@ -63,7 +64,7 @@
           </div>
           <h3>One moment. Reimagined.</h3>
           <p>One personalized final illustration based on your photo or reconstructed scene.</p>
-          <span class="choose-mark">Selected ✓</span>
+          <span class="choose-mark">Selected</span>
         </button>
 
         <button class="format-card" data-format="My Story" type="button">
@@ -111,7 +112,7 @@
           <div class="source-icon">◫</div>
           <strong>Yes, I have event photos</strong>
           <p>Best option. The photo already gives us the people, place, clothes, atmosphere and relationships.</p>
-          <span class="choose-mark">Selected ✓</span>
+          <span class="choose-mark">Selected</span>
         </button>
 
         <button class="source-card" data-source="reconstruct" type="button">
@@ -275,8 +276,6 @@
         <div id="sceneList" class="scene-list"></div>
       </div>
 
-      <div id="plannerStatus" class="planner-status hidden"></div>
-
       <div class="actions three">
         <button class="secondary-btn" data-back="4" type="button">Change details</button>
         <button class="secondary-btn" id="regenerateBtn" type="button">Regenerate plan</button>
@@ -288,8 +287,8 @@
     <section class="panel" data-panel="6">
       <div id="generatingState" class="generating">
         <div class="loader"></div>
-        <h2>Preparing generation package…</h2>
-        <p>Locking the references and approved creative plan.</p>
+        <h2>Generating your Snapshot...</h2>
+        <p>Using the approved creative plan and source image to create the final illustration.</p>
         <div class="fake-progress"><span id="fakeProgress"></span></div>
       </div>
 
@@ -297,17 +296,25 @@
         <div class="result-head">
           <div>
             <div class="kicker">Step 6 of 6</div>
-            <h2>Ready for live AI generation.</h2>
-            <p>This v0.6 stops at the correct generation package instead of showing an unrelated fixed result.</p>
+            <h2>Your result.</h2>
+            <p>Snapshot now generates live from your approved brief. My Story storyboards are packaged for the next generation phase.</p>
           </div>
-          <span class="demo-tag">v0.6</span>
+          <span class="demo-tag">v0.8</span>
         </div>
 
-        <div class="result-placeholder">
-          <span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span>
-          <h3 id="resultPlanTitle"></h3>
-          <p id="resultSummary"></p>
+        <div class="result-layout">
+          <div class="generated-frame">
+            <img id="generatedImage" alt="">
+          </div>
+          <div class="result-copy">
+            <span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span>
+            <h3 id="resultPlanTitle"></h3>
+            <p id="resultSummary"></p>
+            <a class="primary-btn link-btn hidden" id="downloadImageLink" href="#" download="my-story-snapshot.png">Download image</a>
+          </div>
         </div>
+
+        <div id="generationStatus" class="planner-status hidden"></div>
 
         <div class="actions">
           <button class="secondary-btn" id="startOverBtn" type="button">Start another</button>

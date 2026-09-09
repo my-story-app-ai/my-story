@@ -1,3 +1,8 @@
+const MAX_EVENT_PHOTOS = 3;
+const MAX_PEOPLE = 5;
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+const PLANNER_TIMEOUT_MS = 70000;
+const GENERATION_TIMEOUT_MS = 120000;
 
 const state = {
   step: 1,
@@ -6,7 +11,11 @@ const state = {
   source: "event",
   generation: 0,
   sceneOverrides: {},
-  lastPlan: null
+  scenePhotos: {},
+  lastPlan: null,
+  lastDetails: null,
+  lastImages: [],
+  lastSnapshot: null
 };
 
 const panels = [...document.querySelectorAll("[data-panel]")];
@@ -14,7 +23,9 @@ const navItems = [...document.querySelectorAll("[data-step]")];
 const progressBar = document.getElementById("progressBar");
 const peopleList = document.getElementById("peopleList");
 const plannerStatus = document.getElementById("plannerStatus");
+const generationStatus = document.getElementById("generationStatus");
 const apiUrl = window.MY_STORY_CONFIG?.storyPlannerApi || "/api/story-plan";
+const snapshotApiUrl = window.MY_STORY_CONFIG?.snapshotGenerationApi || "/api/snapshot-generate";
 
 function gotoStep(step){
   state.step = step;
@@ -23,6 +34,7 @@ function gotoStep(step){
   progressBar.style.width = `${step / 6 * 100}%`;
   window.scrollTo({top:0, behavior:"smooth"});
 }
+
 document.addEventListener("click", e=>{
   const next = e.target.closest("[data-next]");
   const back = e.target.closest("[data-back]");
@@ -37,12 +49,13 @@ document.querySelectorAll(".format-card").forEach(card=>{
       c.querySelector(".choose-mark").textContent="Choose";
     });
     card.classList.add("selected");
-    card.querySelector(".choose-mark").textContent="Selected ✓";
+    card.querySelector(".choose-mark").textContent="Selected";
     state.format=card.dataset.format;
     document.getElementById("storyModeBlock").classList.toggle("hidden", state.format!=="My Story");
     syncSideCopy();
   });
 });
+
 document.querySelectorAll(".mode-card").forEach(card=>{
   card.addEventListener("click", ()=>{
     document.querySelectorAll(".mode-card").forEach(c=>c.classList.remove("selected"));
@@ -51,6 +64,7 @@ document.querySelectorAll(".mode-card").forEach(card=>{
     syncSideCopy();
   });
 });
+
 document.querySelectorAll(".source-card").forEach(card=>{
   card.addEventListener("click", ()=>{
     document.querySelectorAll(".source-card").forEach(c=>{
@@ -58,7 +72,7 @@ document.querySelectorAll(".source-card").forEach(card=>{
       c.querySelector(".choose-mark").textContent="Choose";
     });
     card.classList.add("selected");
-    card.querySelector(".choose-mark").textContent="Selected ✓";
+    card.querySelector(".choose-mark").textContent="Selected";
     state.source=card.dataset.source;
     document.getElementById("eventPath").classList.toggle("hidden", state.source!=="event");
     document.getElementById("reconstructPath").classList.toggle("hidden", state.source!=="reconstruct");
@@ -71,21 +85,21 @@ function syncSideCopy(){
     document.getElementById("sideText").textContent=`${state.mode} mode: AI reads the memory and reference images, then proposes the synopsis and 4 scenes.`;
   }else{
     document.getElementById("sideTitle").textContent="Create one illustrated moment.";
-    document.getElementById("sideText").textContent="AI reads the source photo and your memory, then creates one precise image brief.";
+    document.getElementById("sideText").textContent="AI plans the image, then v0.8 generates the Snapshot from the approved brief and source photo.";
   }
 }
 
 function addPerson(){
-  if(peopleList.children.length>=5) return;
+  if(peopleList.children.length>=MAX_PEOPLE) return;
   const card=document.createElement("div");
   card.className="person-card";
   card.innerHTML=`
-    <button class="remove-person" type="button">×</button>
+    <button class="remove-person" type="button" aria-label="Remove person">x</button>
     <label>Name<input type="text" class="person-name" placeholder="e.g. Alex"></label>
     <label>Role (optional)<input type="text" class="person-role" placeholder="e.g. son, partner"></label>
     <div class="photo-row">
       <div class="photo-slot">
-        <label>Reference photo<br><small>1 image</small><input type="file" class="person-photo" accept="image/*" hidden></label>
+        <label>Reference photo<br><small>1 image</small><input type="file" class="person-photo" accept="image/jpeg,image/png,image/webp" hidden></label>
       </div>
     </div>`;
   peopleList.appendChild(card);
@@ -95,21 +109,45 @@ function addPerson(){
   card.querySelector(".person-photo").addEventListener("change", e=>{
     const file=e.target.files[0];
     if(!file) return;
+    const validation=validateImageFile(file);
+    if(validation){
+      e.target.value="";
+      showPlannerStatus(validation,"error");
+      return;
+    }
     const slot=e.target.closest(".photo-slot");
     slot.dataset.hasFile="1";
     slot.innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Person reference">`;
     slot._file=file;
+    hidePlannerStatus();
   });
   syncRemove();
 }
+
 function syncRemove(){
   peopleList.querySelectorAll(".remove-person").forEach(btn=>btn.style.visibility=peopleList.children.length===1?"hidden":"visible");
 }
+
 document.getElementById("addPersonBtn").addEventListener("click", addPerson);
 addPerson();
 
+function validateImageFile(file){
+  const allowed=["image/jpeg","image/png","image/webp"];
+  if(!allowed.includes(file.type)) return "Please use JPG, PNG or WEBP images.";
+  if(file.size>MAX_UPLOAD_BYTES) return "One of the images is too large. Please use images under 8 MB each.";
+  return "";
+}
+
 function renderFiles(input, targetId, max){
-  const files=[...input.files].slice(0,max);
+  const selected=[...input.files];
+  const problem=selected.map(validateImageFile).find(Boolean);
+  if(problem){
+    input.value="";
+    document.getElementById(targetId).innerHTML="";
+    showPlannerStatus(problem,"error");
+    return;
+  }
+  const files=selected.slice(0,max);
   const target=document.getElementById(targetId);
   target.innerHTML="";
   files.forEach(file=>{
@@ -117,21 +155,30 @@ function renderFiles(input, targetId, max){
     img.src=URL.createObjectURL(file);
     target.appendChild(img);
   });
+  if(selected.length>max){
+    showPlannerStatus(`Using the first ${max} images. Extra images are ignored for this version.`,"");
+  }else{
+    hidePlannerStatus();
+  }
 }
-document.getElementById("eventPhotos").addEventListener("change",e=>renderFiles(e.target,"eventPreview",3));
+
+document.getElementById("eventPhotos").addEventListener("change",e=>renderFiles(e.target,"eventPreview",MAX_EVENT_PHOTOS));
 document.getElementById("placePhoto").addEventListener("change",e=>renderFiles(e.target,"placePreview",1));
 
 document.getElementById("photosContinueBtn").addEventListener("click", ()=>{
   if(state.source==="event"){
     const count=document.getElementById("eventPhotos").files.length;
-    if(count<1){alert("Please add at least one event photo.");return;}
+    if(count<1){showPlannerStatus("Please add at least one event photo.","error");return;}
   }else{
     const cards=[...peopleList.querySelectorAll(".person-card")];
     for(const card of cards){
       const name=card.querySelector(".person-name").value.trim();
-      if(!name){alert("Please add a name for each person.");return;}
+      const hasPhoto=card.querySelector(".photo-slot")?._file;
+      if(!name){showPlannerStatus("Please add a name for each person.","error");return;}
+      if(!hasPhoto){showPlannerStatus("Please add one reference photo for each person.","error");return;}
     }
   }
+  hidePlannerStatus();
   gotoStep(4);
 });
 
@@ -149,25 +196,34 @@ function collect(){
   };
 }
 
-async function fileToDataUrl(file, maxSide=1024, quality=.72){
+async function fileToDataUrl(file, maxSide=1280, quality=.78){
   if(!file) return null;
-  const bitmap=await createImageBitmap(file);
-  let {width,height}=bitmap;
-  const scale=Math.min(1,maxSide/Math.max(width,height));
-  width=Math.round(width*scale);
-  height=Math.round(height*scale);
-  const canvas=document.createElement("canvas");
-  canvas.width=width;canvas.height=height;
-  const ctx=canvas.getContext("2d");
-  ctx.drawImage(bitmap,0,0,width,height);
-  bitmap.close();
-  return canvas.toDataURL("image/jpeg",quality);
+  const validation=validateImageFile(file);
+  if(validation) throw new Error(validation);
+  let bitmap;
+  try{
+    bitmap=await createImageBitmap(file);
+    let {width,height}=bitmap;
+    const scale=Math.min(1,maxSide/Math.max(width,height));
+    width=Math.round(width*scale);
+    height=Math.round(height*scale);
+    const canvas=document.createElement("canvas");
+    canvas.width=width;
+    canvas.height=height;
+    const ctx=canvas.getContext("2d");
+    ctx.drawImage(bitmap,0,0,width,height);
+    return canvas.toDataURL("image/jpeg",quality);
+  }catch(error){
+    throw new Error(`Could not read ${file.name}. Please try a different image.`);
+  }finally{
+    if(bitmap) bitmap.close();
+  }
 }
 
 async function collectImages(){
   const images=[];
   if(state.source==="event"){
-    const files=[...document.getElementById("eventPhotos").files].slice(0,3);
+    const files=[...document.getElementById("eventPhotos").files].slice(0,MAX_EVENT_PHOTOS);
     for(let i=0;i<files.length;i++){
       images.push({
         kind:"event",
@@ -202,27 +258,84 @@ async function collectImages(){
 
 function showPlannerStatus(message,type=""){
   plannerStatus.className=`planner-status ${type}`.trim();
-  plannerStatus.innerHTML=message;
+  plannerStatus.textContent=message;
   plannerStatus.classList.remove("hidden");
 }
+
 function hidePlannerStatus(){
   plannerStatus.classList.add("hidden");
+}
+
+function showGenerationStatus(message,type=""){
+  generationStatus.className=`planner-status ${type}`.trim();
+  generationStatus.textContent=message;
+  generationStatus.classList.remove("hidden");
+}
+
+function hideGenerationStatus(){
+  generationStatus.classList.add("hidden");
+}
+
+async function fetchJsonWithTimeout(url, options, timeoutMs){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(), timeoutMs);
+  try{
+    const response=await fetch(url,{...options,signal:controller.signal});
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok){
+      throw new Error(payload.error || payload.detail || `Request failed (${response.status})`);
+    }
+    return payload;
+  }catch(error){
+    if(error.name==="AbortError") throw new Error("The request took too long. Please try again.");
+    throw error;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+function hasText(value){
+  return typeof value==="string" && value.trim().length>0;
+}
+
+function validatePlan(plan, format){
+  if(!plan || typeof plan!=="object") throw new Error("Planner returned an empty plan.");
+  if(!hasText(plan.title) || !hasText(plan.synopsis)) throw new Error("Planner returned an incomplete title or synopsis.");
+
+  if(format==="Snapshot"){
+    ["source_strategy","action","framing","emotion","visual_anchor"].forEach(key=>{
+      if(!hasText(plan[key])) throw new Error(`Planner returned an incomplete Snapshot field: ${key}.`);
+    });
+    return;
+  }
+
+  if(!Array.isArray(plan.scenes) || plan.scenes.length!==4){
+    throw new Error("Planner must return exactly 4 scenes for My Story.");
+  }
+  plan.scenes.forEach((scene,index)=>{
+    ["title","location","time","action","framing","emotion","visual_anchor"].forEach(key=>{
+      if(!hasText(scene?.[key])) throw new Error(`Scene ${index+1} is missing ${key}.`);
+    });
+  });
 }
 
 async function callPlanner(){
   const data=collect();
   if(!data.memory){
-    alert("Tell us a little about the moment first.");
+    showPlannerStatus("Tell us a little about the moment first.","error");
     return;
   }
 
   const btn=document.getElementById("planBtn");
   btn.disabled=true;
-  btn.textContent="Building AI plan…";
+  btn.textContent="Building AI plan...";
 
   try{
     const images=await collectImages();
-    const response=await fetch(apiUrl,{
+    if(images.length===0) throw new Error("Please add the required source photo before planning.");
+    showPlannerStatus("AI planner is reading your memory and source images...","");
+
+    const payload=await fetchJsonWithTimeout(apiUrl,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
@@ -233,20 +346,19 @@ async function callPlanner(){
         details:data,
         images
       })
-    });
+    },PLANNER_TIMEOUT_MS);
 
-    const payload=await response.json().catch(()=>({}));
-    if(!response.ok){
-      throw new Error(payload.error || `Planner request failed (${response.status})`);
-    }
-
+    validatePlan(payload.plan,state.format);
     state.lastPlan=payload.plan;
+    state.lastDetails=data;
+    state.lastImages=images;
+    state.lastSnapshot=null;
     renderAIPlan(payload.plan);
     gotoStep(5);
     showPlannerStatus("AI planner completed successfully.","success");
   }catch(err){
     console.error(err);
-    alert(`AI Story Planner error: ${err.message}`);
+    showPlannerStatus(`AI Story Planner error: ${err.message}`,"error");
   }finally{
     btn.disabled=false;
     btn.textContent="Build AI creative plan";
@@ -260,10 +372,11 @@ function renderAIPlan(plan){
   document.getElementById("previewSynopsis").textContent=plan.synopsis;
   document.getElementById("snapshotPlan").classList.toggle("hidden",isStory);
   document.getElementById("storyPlan").classList.toggle("hidden",!isStory);
+  document.getElementById("finalBtn").textContent=isStory ? "Approve storyboard" : "Generate Snapshot";
 
   if(!isStory){
     document.getElementById("planHeading").textContent="Your AI Snapshot direction.";
-    document.getElementById("planExplainer").textContent="The live planner analyzed your inputs and produced this image brief.";
+    document.getElementById("planExplainer").textContent="Approve this brief to generate the final Snapshot from your source image.";
     document.getElementById("snapSource").textContent=plan.source_strategy;
     document.getElementById("snapAction").textContent=plan.action;
     document.getElementById("snapFraming").textContent=plan.framing;
@@ -272,7 +385,7 @@ function renderAIPlan(plan){
     document.getElementById("planHeading").textContent="AI synopsis + 4-scene storyboard.";
     document.getElementById("planExplainer").textContent=state.mode==="Easy"
       ?"Easy mode: accept the AI plan or regenerate another complete version."
-      :"Guided mode: use the AI plan as a starting point, then change individual scenes or add scene photos.";
+      :"Guided mode: use the AI plan as a starting point, then change individual scenes or add a scene-specific photo.";
     document.getElementById("modeBadge").textContent=`${state.mode} mode`;
     renderScenes(plan.scenes || []);
   }
@@ -299,7 +412,7 @@ function renderScenes(scenes){
       ${state.mode==="Guided" ? `
       <div class="guided-tools">
         <button class="scene-action change-scene" data-index="${i}" type="button">Change scene</button>
-        <label class="scene-action">Add scene photo<input class="scene-photo-input" data-index="${i}" type="file" accept="image/*"></label>
+        <label class="scene-action">Add scene photo<input class="scene-photo-input" data-index="${i}" type="file" accept="image/jpeg,image/png,image/webp"></label>
       </div>
       <div class="scene-edit-wrap hidden" data-edit="${i}">
         <textarea class="scene-edit">${escapeHtml(description)}</textarea>
@@ -316,15 +429,137 @@ function renderScenes(scenes){
     }));
     wrap.querySelectorAll(".save-scene").forEach(btn=>btn.addEventListener("click",()=>{
       const text=wrap.querySelector(`[data-edit="${btn.dataset.index}"] textarea`).value.trim();
-      state.sceneOverrides[btn.dataset.index]=text;
+      if(text) state.sceneOverrides[btn.dataset.index]=text;
       renderScenes(state.lastPlan.scenes);
     }));
-    wrap.querySelectorAll(".scene-photo-input").forEach(input=>input.addEventListener("change",()=>{
+    wrap.querySelectorAll(".scene-photo-input").forEach(input=>input.addEventListener("change",async ()=>{
       const file=input.files[0]; if(!file)return;
+      const validation=validateImageFile(file);
+      if(validation){showPlannerStatus(validation,"error");return;}
+      state.scenePhotos[input.dataset.index]=await fileToDataUrl(file);
       wrap.querySelector(`[data-photo="${input.dataset.index}"]`).innerHTML=
         `<img src="${URL.createObjectURL(file)}" alt="Scene reference">`;
     }));
   }
+}
+
+function approvedPackage(){
+  return {
+    format:state.format,
+    mode:state.mode,
+    source:state.source,
+    details:state.lastDetails,
+    plan:state.lastPlan,
+    images:state.lastImages,
+    sceneOverrides:state.sceneOverrides,
+    scenePhotos:state.scenePhotos
+  };
+}
+
+async function generateSnapshot(){
+  if(!state.lastPlan || !state.lastDetails){
+    showPlannerStatus("Build and approve a creative plan first.","error");
+    gotoStep(5);
+    return;
+  }
+  gotoStep(6);
+  hideGenerationStatus();
+  document.getElementById("generatingState").classList.remove("hidden");
+  document.getElementById("resultState").classList.add("hidden");
+  document.getElementById("generatedImage").removeAttribute("src");
+  document.getElementById("downloadImageLink").classList.add("hidden");
+  document.getElementById("fakeProgress").style.width="18%";
+
+  try{
+    if(state.format!=="Snapshot"){
+      renderStoryApproved();
+      return;
+    }
+    showGenerationStatus("Generating your Snapshot from the approved brief and source photo...","");
+    const payload=await fetchJsonWithTimeout(snapshotApiUrl,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(approvedPackage())
+    },GENERATION_TIMEOUT_MS);
+
+    if(!hasText(payload.image?.dataUrl)) throw new Error("Image generation finished without an image.");
+    state.lastSnapshot=payload.image;
+    renderSnapshotResult(payload);
+  }catch(error){
+    console.error(error);
+    document.getElementById("generatingState").classList.add("hidden");
+    document.getElementById("resultState").classList.remove("hidden");
+    document.getElementById("resultPlanTitle").textContent=state.lastPlan?.title || "Snapshot generation";
+    document.getElementById("resultSummary").textContent="The approved creative plan is safe. Generation can be retried without changing your inputs.";
+    showGenerationStatus(`Snapshot generation error: ${error.message}`,"error");
+  }
+}
+
+function renderSnapshotResult(payload){
+  document.getElementById("fakeProgress").style.width="100%";
+  document.getElementById("generatingState").classList.add("hidden");
+  document.getElementById("resultState").classList.remove("hidden");
+  document.getElementById("resultFormatLabel").textContent="SNAPSHOT";
+  document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
+  document.getElementById("resultSummary").textContent="Your generated Snapshot is ready. It was built from the approved AI brief and your source image.";
+  const img=document.getElementById("generatedImage");
+  img.src=payload.image.dataUrl;
+  img.alt=state.lastPlan.title;
+  const link=document.getElementById("downloadImageLink");
+  link.href=payload.image.dataUrl;
+  link.download=`${slugify(state.lastPlan.title)}.png`;
+  link.classList.remove("hidden");
+  showGenerationStatus(`Generated with ${payload.model || "the Snapshot image model"}.`,"success");
+}
+
+function renderStoryApproved(){
+  document.getElementById("generatingState").classList.add("hidden");
+  document.getElementById("resultState").classList.remove("hidden");
+  document.getElementById("resultFormatLabel").textContent="MY STORY";
+  document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
+  document.getElementById("resultSummary").textContent="Storyboard approved. v0.8 focuses live generation on Snapshot; multi-scene Story generation will use this approved package next.";
+  showGenerationStatus("The My Story storyboard package is approved and ready for the next generation phase.","success");
+}
+
+function resetFlow(){
+  document.querySelectorAll("input, textarea").forEach(input=>{
+    if(input.type==="file" || input.tagName==="TEXTAREA" || input.type==="text") input.value="";
+  });
+  document.getElementById("theme").value="Family Adventure";
+  document.getElementById("tone").value="Magical";
+  document.getElementById("eventPreview").innerHTML="";
+  document.getElementById("placePreview").innerHTML="";
+  peopleList.innerHTML="";
+  addPerson();
+  state.step=1;
+  state.format="Snapshot";
+  state.mode="Easy";
+  state.source="event";
+  state.generation=0;
+  state.sceneOverrides={};
+  state.scenePhotos={};
+  state.lastPlan=null;
+  state.lastDetails=null;
+  state.lastImages=[];
+  state.lastSnapshot=null;
+  document.querySelectorAll(".format-card").forEach(card=>{
+    const selected=card.dataset.format==="Snapshot";
+    card.classList.toggle("selected",selected);
+    card.querySelector(".choose-mark").textContent=selected ? "Selected" : "Choose";
+  });
+  document.querySelectorAll(".mode-card").forEach(card=>card.classList.toggle("selected",card.dataset.mode==="Easy"));
+  document.querySelectorAll(".source-card").forEach(card=>{
+    const selected=card.dataset.source==="event";
+    card.classList.toggle("selected",selected);
+    card.querySelector(".choose-mark").textContent=selected ? "Selected" : "Choose";
+  });
+  syncSideCopy();
+  hidePlannerStatus();
+  hideGenerationStatus();
+  document.getElementById("eventPath").classList.remove("hidden");
+  document.getElementById("reconstructPath").classList.add("hidden");
+  document.getElementById("storyModeBlock").classList.add("hidden");
+  gotoStep(1);
 }
 
 function escapeHtml(value=""){
@@ -333,40 +568,19 @@ function escapeHtml(value=""){
   }[m]));
 }
 
+function slugify(value){
+  return String(value || "my-story-snapshot").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "my-story-snapshot";
+}
+
 document.getElementById("planBtn").addEventListener("click",callPlanner);
 
 document.getElementById("regenerateBtn").addEventListener("click",async ()=>{
   state.generation++;
   state.sceneOverrides={};
+  state.scenePhotos={};
   gotoStep(4);
   await callPlanner();
 });
 
-document.getElementById("finalBtn").addEventListener("click",()=>{
-  gotoStep(6);
-  document.getElementById("generatingState").classList.remove("hidden");
-  document.getElementById("resultState").classList.add("hidden");
-  const bar=document.getElementById("fakeProgress");bar.style.width="0%";
-  let p=0;
-  const timer=setInterval(()=>{
-    p+=12+Math.random()*12;
-    if(p>=100){
-      p=100;clearInterval(timer);
-      setTimeout(()=>{
-        document.getElementById("generatingState").classList.add("hidden");
-        document.getElementById("resultState").classList.remove("hidden");
-        document.getElementById("resultFormatLabel").textContent=state.format.toUpperCase();
-        document.getElementById("resultPlanTitle").textContent=state.lastPlan?.title || "Approved plan";
-        document.getElementById("resultSummary").textContent=
-          state.format==="Snapshot"
-          ?"The live AI Story Planner is now working. v0.8 will send this approved brief and source image(s) to live image generation."
-          :"The live AI Story Planner is now working. v0.8/v0.9 will turn this approved storyboard into consistent illustrated scenes.";
-      },250);
-    }
-    bar.style.width=`${p}%`;
-  },160);
-});
-
-document.getElementById("startOverBtn").addEventListener("click",()=>{
-  state.generation=0;state.sceneOverrides={};state.lastPlan=null;hidePlannerStatus();gotoStep(1);
-});
+document.getElementById("finalBtn").addEventListener("click",generateSnapshot);
+document.getElementById("startOverBtn").addEventListener("click",resetFlow);
