@@ -28,3 +28,23 @@ No manual/human intervention is part of the product flow.
 - hero cover is now only a visual product teaser
 - removed duplicate sample badge/callout from hero
 - retained a single dedicated Real Product Sample section
+
+## v0.2 Landing redesign
+- new paper / kraft / graphic-novel inspired visual direction
+- lighter, warmer background instead of purple-black SaaS styling
+- clear two-product architecture:
+  - Snapshot — $9.99 — one personalized final illustration
+  - My Story — $19.99 — multi-page illustrated PDF
+- landing shows only one large sample image plus two small teaser panels
+- full demo remains behind the PDF button
+- shorter mobile scroll
+- simplified 4-step explanation
+
+## v0.3 Visual system locked
+- landing, app, Privacy, Terms and Refund now share the same paper / graphic-novel identity
+- unified logo, typography, borders, shadows, red CTA and mustard accents
+- fixed top-right CTA contrast
+- legal pages no longer contain empty Contact fields
+- app visually continues the landing instead of switching to a dark SaaS theme
+- mobile behavior retained
+- sample area shortened further

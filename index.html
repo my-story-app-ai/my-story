@@ -3,301 +3,238 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="My Story turns your own photos and memories into personalized illustrated stories." />
+  <meta name="description" content="My Story turns your photos and memories into personalized illustrated snapshots and stories." />
   <title>My Story — Your memories. Reimagined.</title>
   <style>
     :root{
-      --bg:#090b15;
-      --bg2:#0d1020;
-      --panel:#12172a;
-      --panel2:#0f1425;
-      --text:#f7f8fc;
-      --muted:#aab2c8;
-      --soft:#7f88a4;
-      --accent:#8f82ff;
-      --accent2:#df6fc5;
-      --accent3:#7cc8ff;
-      --line:rgba(255,255,255,.09);
-      --line-strong:rgba(255,255,255,.16);
-      --shadow:0 30px 90px rgba(0,0,0,.42);
-      --radius:28px;
-      --radius-sm:18px;
+      --paper:#e9dfc8;
+      --paper-2:#f4ecd9;
+      --paper-3:#fffaf0;
+      --ink:#241f1a;
+      --muted:#695f54;
+      --line:#2c2722;
+      --soft-line:rgba(44,39,34,.18);
+      --accent:#b6483e;
+      --accent-dark:#8f342c;
+      --mustard:#d3a54a;
+      --shadow:0 18px 45px rgba(54,41,28,.16);
+      --radius:18px;
     }
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
       margin:0;
+      color:var(--ink);
       font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--text);
       background:
-        radial-gradient(circle at 12% -8%, rgba(143,130,255,.20), transparent 34%),
-        radial-gradient(circle at 95% 8%, rgba(223,111,197,.15), transparent 30%),
-        linear-gradient(180deg,var(--bg),var(--bg2) 46%,var(--bg));
-      line-height:1.55;
-      -webkit-font-smoothing:antialiased;
+        linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
+        repeating-linear-gradient(
+          0deg,
+          rgba(70,54,35,.022) 0,
+          rgba(70,54,35,.022) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        var(--paper);
+      line-height:1.5;
     }
 
-    img{max-width:100%}
+    img{max-width:100%;display:block}
     a{color:inherit}
-    .wrap{width:min(1180px,calc(100% - 40px));margin:auto}
+    .wrap{width:min(1160px,calc(100% - 32px));margin:auto}
 
     header{
-      position:sticky;top:0;z-index:50;
-      backdrop-filter:blur(18px);
-      background:rgba(9,11,21,.72);
-      border-bottom:1px solid rgba(255,255,255,.06)
+      position:sticky;top:0;z-index:30;
+      background:rgba(233,223,200,.92);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(44,39,34,.16);
     }
 
-    nav{height:74px;display:flex;align-items:center;justify-content:space-between}
-    .brand{
-      display:flex;align-items:center;gap:10px;
-      font-weight:800;letter-spacing:-.035em;font-size:1.22rem
-    }
+    nav{height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.04em;font-size:1.2rem}
     .brand-mark{
-      width:32px;height:32px;border-radius:10px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:0 8px 24px rgba(143,130,255,.28);
-      display:grid;place-items:center;font-weight:900;font-size:.95rem
+      width:34px;height:34px;border:2px solid var(--line);
+      background:var(--paper-3);display:grid;place-items:center;
+      transform:rotate(-2deg);box-shadow:3px 3px 0 var(--line);
+      font-family:Georgia,serif;font-weight:900;
     }
-    .brand span:last-child{color:#c9c2ff}
-
-    .navlinks{display:flex;gap:24px;align-items:center}
-    .navlinks a{text-decoration:none;color:var(--muted);font-size:.94rem}
-    .navlinks a:hover{color:#fff}
-
+    .navlinks{display:flex;gap:20px;align-items:center}
+    .navlinks a{text-decoration:none;color:var(--muted);font-size:.93rem;font-weight:650}
+	.navlinks a.btn{color:#fff;}
     .btn{
       display:inline-flex;align-items:center;justify-content:center;
-      gap:8px;padding:13px 18px;border-radius:999px;
-      text-decoration:none;font-weight:760;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:#fff;border:0;
-      box-shadow:0 12px 34px rgba(143,130,255,.24);
-      transition:.2s ease;
+      min-height:46px;padding:12px 18px;
+      border:2px solid var(--line);border-radius:10px;
+      background:var(--accent);color:#fff;
+      text-decoration:none;font-weight:800;
+      box-shadow:4px 4px 0 var(--line);
+      transition:.15s ease;
     }
-    .btn:hover{transform:translateY(-1px);box-shadow:0 16px 38px rgba(143,130,255,.30)}
-    .btn.secondary{
-      background:rgba(255,255,255,.035);
-      border:1px solid var(--line-strong);
-      box-shadow:none;color:var(--text)
-    }
-    .btn.ghost{
-      background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--muted)
-    }
+    .btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--line)}
+    .btn.secondary{background:var(--paper-3);color:var(--ink)}
+    .btn.small{min-height:40px;padding:9px 14px;font-size:.9rem}
 
-    .hero{padding:92px 0 68px;position:relative;overflow:hidden}
-    .hero:after{
-      content:"";position:absolute;inset:auto -10% -35% auto;
-      width:520px;height:520px;border-radius:50%;
-      background:radial-gradient(circle,rgba(124,200,255,.11),transparent 68%);
-      pointer-events:none
-    }
-    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:66px;align-items:center}
-
+    .hero{padding:58px 0 48px}
+    .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
     .eyebrow{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border:1px solid var(--line);
-      border-radius:999px;color:#d7d3ff;
-      background:rgba(255,255,255,.035);
-      font-size:.84rem;letter-spacing:.01em
+      display:inline-block;padding:7px 10px;border:1px solid var(--line);
+      background:var(--paper-2);font-size:.79rem;font-weight:800;
+      text-transform:uppercase;letter-spacing:.1em;
     }
-    .eyebrow:before{
-      content:"";width:7px;height:7px;border-radius:50%;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      box-shadow:0 0 14px rgba(143,130,255,.7)
-    }
-
     h1{
-      font-size:clamp(3.2rem,7vw,6.5rem);
-      line-height:.92;letter-spacing:-.068em;
-      margin:22px 0 22px
+      margin:18px 0 18px;
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(3.2rem,7vw,6.2rem);
+      line-height:.92;letter-spacing:-.055em;
     }
-    h1 em{
-      font-style:normal;
-      background:linear-gradient(90deg,#d9d4ff 0%,#b7b1ff 35%,#e8a8d7 100%);
-      -webkit-background-clip:text;background-clip:text;color:transparent
+    h1 em{font-style:italic;color:var(--accent-dark)}
+    .lead{font-size:1.15rem;color:var(--muted);max-width:640px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+    .micro{margin-top:13px;color:var(--muted);font-size:.87rem}
+
+    .hero-frame{
+      background:var(--paper-3);padding:12px;
+      border:3px solid var(--line);
+      box-shadow:8px 8px 0 rgba(44,39,34,.95);
+      transform:rotate(1deg);
+    }
+    .hero-frame img{border:2px solid var(--line)}
+    .hero-caption{
+      padding:12px 4px 2px;
+      font-family:Georgia,serif;font-weight:700;
+      font-size:1rem;
     }
 
-    .lead{font-size:1.15rem;color:var(--muted);max-width:650px}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
-    .micro{font-size:.86rem;color:var(--soft);margin-top:14px}
-
-    .hero-proof{
-      display:flex;gap:18px;flex-wrap:wrap;margin-top:30px
-    }
-    .proof{
-      display:flex;align-items:center;gap:8px;
-      color:#d9deee;font-size:.92rem
-    }
-    .check{
-      width:20px;height:20px;border-radius:50%;
-      display:grid;place-items:center;
-      background:rgba(143,130,255,.15);
-      border:1px solid rgba(143,130,255,.25);
-      font-size:.72rem;color:#d7d1ff
-    }
-
-    .cover-shell{
-      position:relative;
-      padding:22px;
-      border:1px solid var(--line);
-      border-radius:36px;
-      background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.018));
-      box-shadow:var(--shadow);
-    }
-        .cover-shell img{display:block;width:100%;border-radius:24px}
-    .cover-meta{
-      display:flex;justify-content:space-between;gap:16px;align-items:center;
-      margin-top:16px;padding:0 2px
-    }
-    .cover-meta strong{font-size:1rem}
-    .cover-meta span{font-size:.86rem;color:var(--soft)}
-
-    section{padding:78px 0}
+    section{padding:62px 0}
     .section-kicker{
-      text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;
-      color:#a79eff;font-weight:750;margin-bottom:10px
+      text-transform:uppercase;letter-spacing:.12em;
+      font-size:.76rem;font-weight:850;color:var(--accent-dark);
+      margin-bottom:8px;
     }
     .section-title{
-      font-size:clamp(2.2rem,4.5vw,4rem);
-      letter-spacing:-.05em;line-height:1.02;
-      margin:0 0 14px
+      font-family:Georgia,"Times New Roman",serif;
+      font-size:clamp(2.2rem,4vw,3.8rem);
+      line-height:1;letter-spacing:-.04em;
+      margin:0 0 14px;
     }
-    .section-copy{color:var(--muted);max-width:760px;margin:0 0 36px}
+    .section-copy{color:var(--muted);max-width:760px;margin:0 0 28px}
 
-    .glass{
-      border:1px solid var(--line);
-      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
-      box-shadow:var(--shadow)
+    .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .product-card{
+      background:var(--paper-3);
+      border:3px solid var(--line);
+      box-shadow:7px 7px 0 rgba(44,39,34,.92);
+      padding:24px;position:relative;
+    }
+    .product-card.snapshot{transform:rotate(-.4deg)}
+    .product-card.story{transform:rotate(.4deg)}
+    .product-card h3{
+      font-family:Georgia,serif;font-size:2rem;
+      margin:5px 0 6px;
+    }
+    .product-tagline{font-style:italic;color:var(--muted);margin-bottom:16px}
+    .price{font-size:2.8rem;font-weight:900;letter-spacing:-.05em;margin:8px 0}
+    .price small{font-size:.95rem;font-weight:600;color:var(--muted);letter-spacing:0}
+    .product-card ul{padding-left:20px;color:var(--muted);margin-bottom:22px}
+    .product-card li{margin:8px 0}
+    .ribbon{
+      position:absolute;top:14px;right:-8px;
+      background:var(--mustard);border:2px solid var(--line);
+      padding:6px 10px;font-weight:850;font-size:.75rem;
+      transform:rotate(2deg);box-shadow:3px 3px 0 var(--line);
     }
 
-    .sample-grid{
-      display:grid;grid-template-columns:1.07fr .93fr;
-      gap:22px;align-items:start
+    .sample-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
+    .sample-main{
+      background:var(--paper-3);padding:10px;border:3px solid var(--line);
+      box-shadow:7px 7px 0 rgba(44,39,34,.92);
+      transform:rotate(-.5deg);
     }
-    .sample-feature{
-      border-radius:30px;padding:16px;
-      background:var(--panel2);border:1px solid var(--line)
+    .sample-main img{border:2px solid var(--line)}
+    .sample-side h3{
+      font-family:Georgia,serif;font-size:2rem;line-height:1.05;margin:0 0 12px;
     }
-    .sample-feature img{width:100%;display:block;border-radius:20px}
-    .sample-copy{padding:18px 6px 6px}
-    .sample-copy h3{font-size:1.75rem;margin:4px 0 8px;letter-spacing:-.025em}
-    .sample-copy p{color:var(--muted);margin:0}
+    .sample-side p{color:var(--muted)}
+    .mini-strip{
+      margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    }
+    .mini-panel{
+      background:var(--paper-3);padding:6px;border:2px solid var(--line);
+      aspect-ratio:16/10;overflow:hidden;
+    }
+    .mini-panel img{width:100%;height:100%;object-fit:cover;border:1px solid var(--line)}
 
-    .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .thumb{
-      border:1px solid var(--line);border-radius:22px;
-      padding:9px;background:rgba(255,255,255,.022);
-      transition:.2s ease
-    }
-    .thumb:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.17)}
-    .thumb img{width:100%;display:block;border-radius:15px}
-
-    .flow{
-      display:grid;grid-template-columns:repeat(5,1fr);
-      gap:14px
-    }
+    .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     .step{
-      position:relative;
-      padding:22px 20px 20px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:rgba(255,255,255,.026)
+      background:rgba(255,250,240,.68);
+      border:2px solid var(--line);padding:18px;
+      min-height:150px;position:relative;
     }
-    .step-number{
-      width:34px;height:34px;border-radius:12px;
-      display:grid;place-items:center;
-      font-weight:800;font-size:.85rem;
-      color:#e1dcff;background:rgba(143,130,255,.12);
-      border:1px solid rgba(143,130,255,.20)
+    .step-num{
+      font-family:Georgia,serif;font-weight:900;font-size:1.3rem;
+      color:var(--accent-dark);
     }
-    .step h3{font-size:1.03rem;margin:14px 0 7px}
-    .step p{margin:0;color:var(--muted);font-size:.91rem}
+    .step h3{margin:9px 0 6px;font-family:Georgia,serif}
+    .step p{margin:0;color:var(--muted);font-size:.9rem}
 
-    .ideas{display:flex;gap:10px;flex-wrap:wrap}
+    .ideas{display:flex;gap:9px;flex-wrap:wrap}
     .pill{
-      border:1px solid var(--line);
-      border-radius:999px;padding:10px 14px;
-      color:#dce1f0;background:rgba(255,255,255,.028)
+      border:2px solid var(--line);background:var(--paper-3);
+      padding:8px 12px;border-radius:999px;font-weight:700;font-size:.9rem;
     }
 
-    .pricing{
-      display:grid;grid-template-columns:1fr 1fr;gap:18px
-    }
-    .price-card{
-      position:relative;padding:30px;
-      border:1px solid var(--line);
-      border-radius:28px;
-      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018))
-    }
-    .price-card.featured{
-      border-color:rgba(143,130,255,.35);
-      box-shadow:0 24px 70px rgba(90,75,180,.14)
-    }
-    .badge{
-      position:absolute;top:18px;right:18px;
-      font-size:.74rem;font-weight:750;
-      padding:7px 10px;border-radius:999px;
-      color:#ddd8ff;background:rgba(143,130,255,.12);
-      border:1px solid rgba(143,130,255,.22)
-    }
-    .price-card h3{font-size:1.45rem;margin:8px 0 10px}
-    .price{
-      font-size:3.25rem;font-weight:850;letter-spacing:-.06em
-    }
-    .price small{font-size:.95rem;color:var(--muted);font-weight:500;letter-spacing:0}
-    ul{padding-left:20px;color:var(--muted)}
-    li{margin:8px 0}
-    .notice{font-size:.9rem;color:var(--soft)}
-
-    .faq{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     details{
-      border:1px solid var(--line);border-radius:20px;
-      padding:18px 20px;background:rgba(255,255,255,.025)
+      background:rgba(255,250,240,.72);
+      border:2px solid var(--line);
+      padding:16px 18px;
     }
-    summary{cursor:pointer;font-weight:720}
+    summary{cursor:pointer;font-weight:800}
     details p{color:var(--muted);margin-bottom:0}
 
-    .cta-band{
-      border:1px solid rgba(143,130,255,.22);
-      border-radius:30px;padding:38px;
-      background:
-        radial-gradient(circle at 90% 20%,rgba(223,111,197,.13),transparent 32%),
-        linear-gradient(135deg,rgba(143,130,255,.13),rgba(255,255,255,.025));
-      display:flex;justify-content:space-between;gap:30px;align-items:center
+    .launch{
+      background:var(--paper-3);border:3px solid var(--line);
+      box-shadow:7px 7px 0 rgba(44,39,34,.92);
+      padding:28px;display:flex;justify-content:space-between;gap:22px;align-items:center;
     }
-    .cta-band h3{font-size:2rem;margin:0 0 8px;letter-spacing:-.035em}
-    .cta-band p{margin:0;color:var(--muted)}
+    .launch h3{font-family:Georgia,serif;font-size:1.8rem;margin:0 0 6px}
+    .launch p{margin:0;color:var(--muted)}
     .status{
-      padding:12px 16px;border-radius:999px;
-      background:rgba(255,255,255,.045);
-      border:1px solid var(--line);
-      color:#d8ddec;font-weight:700;
-      white-space:nowrap
+      white-space:nowrap;border:2px solid var(--line);padding:9px 12px;
+      background:var(--mustard);font-weight:850;
     }
 
     footer{
-      border-top:1px solid var(--line);
-      padding:28px 0 40px;color:var(--soft);font-size:.9rem
+      border-top:1px solid rgba(44,39,34,.16);
+      padding:26px 0 36px;color:var(--muted);font-size:.9rem
     }
     .footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-    .footer-links{display:flex;gap:18px;flex-wrap:wrap}
-    .footer-links a{text-decoration:none;color:var(--soft)}
-    .footer-links a:hover{color:#fff}
+    .footer-links{display:flex;gap:16px;flex-wrap:wrap}
+    .footer-links a{text-decoration:none}
 
-    @media (max-width:980px){
-      .hero-grid,.sample-grid,.pricing,.faq{grid-template-columns:1fr}
+    @media(max-width:900px){
+      .hero-grid,.product-grid,.sample-layout,.faq{grid-template-columns:1fr}
       .flow{grid-template-columns:1fr 1fr}
-      .hero{padding-top:64px}
+      .hero-frame{transform:none}
+      .product-card.snapshot,.product-card.story{transform:none}
     }
-    @media (max-width:720px){
+
+    @media(max-width:650px){
+      .wrap{width:min(100% - 20px,1160px)}
       .navlinks a:not(.btn){display:none}
-      .wrap{width:min(100% - 28px,1180px)}
-      .hero{padding-bottom:48px}
-      .flow,.thumbs{grid-template-columns:1fr}
-      .cta-band{flex-direction:column;align-items:flex-start}
-      .cover-shell{padding:12px;border-radius:26px}
-      .cover-shell img{border-radius:18px}
+      nav{height:62px}
+      .hero{padding:46px 0 36px}
+      h1{font-size:3.25rem}
+      .lead{font-size:1rem}
+      .actions{display:grid;grid-template-columns:1fr}
+      .btn{width:100%}
+      .hero-frame{box-shadow:5px 5px 0 rgba(44,39,34,.92)}
+      section{padding:46px 0}
+      .flow{grid-template-columns:1fr}
+      .mini-strip{grid-template-columns:1fr 1fr}
+      .launch{flex-direction:column;align-items:flex-start}
+      .status{white-space:normal}
     }
   </style>
 </head>
@@ -308,15 +245,14 @@
     <nav>
       <div class="brand">
         <div class="brand-mark">M</div>
-        <div>My <span>Story</span></div>
+        <div>My Story</div>
       </div>
-
       <div class="navlinks">
+        <a href="#products">Products</a>
         <a href="#sample">Sample</a>
         <a href="#how">How it works</a>
-        <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
-        <a class="btn" href="app/index.html">Create your story</a>
+        <a class="btn small" href="app/index.html">Create yours</a>
       </div>
     </nav>
   </div>
@@ -327,68 +263,87 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="eyebrow">Personalized illustrated stories from your own memories</div>
-
+        <div class="eyebrow">Personalized illustrated memories</div>
         <h1>Your memories.<br><em>Reimagined.</em></h1>
-
         <p class="lead">
-          Upload a few photos, tell us the moment you want to remember,
-          and My Story transforms it into a unique illustrated story made for you.
+          Turn your own photos and memories into a personalized illustrated keepsake —
+          from one unforgettable scene to a complete story.
         </p>
-
         <div class="actions">
-          <a class="btn" href="app/index.html">Create your first story</a>
-          <a class="btn secondary" href="#sample">See a real sample</a>
+          <a class="btn" href="#products">Choose your format</a>
+          <a class="btn secondary" href="#sample">See a sample</a>
         </div>
-
-        <div class="micro">One story. One payment. No subscription.</div>
-
-        <div class="hero-proof">
-          <div class="proof"><span class="check">✓</span> Personal</div>
-          <div class="proof"><span class="check">✓</span> Illustrated</div>
-          <div class="proof"><span class="check">✓</span> Gift-ready</div>
-        </div>
+        <div class="micro">One payment. No subscription. Fully digital.</div>
       </div>
 
-      <div class="cover-shell">
-        <img src="assets/samples/cover.png" alt="Personalized illustrated story cover example" />
-        <div class="cover-meta">
-          <div>
-            <strong>Turn a memory into a story worth keeping.</strong><br>
-            <span>Personalized • illustrated • digital</span>
-          </div>
-        </div>
+      <div class="hero-frame">
+        <img src="assets/samples/cover.png" alt="My Story illustrated story example">
+        <div class="hero-caption">A memory, reimagined as something worth keeping.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products">
+    <div class="wrap">
+      <div class="section-kicker">Choose your format</div>
+      <h2 class="section-title">One moment — or the whole story.</h2>
+      <p class="section-copy">
+        Two simple products, depending on how far you want to take the memory.
+      </p>
+
+      <div class="product-grid">
+        <article class="product-card snapshot">
+          <div class="section-kicker">Snapshot</div>
+          <h3>One moment. Reimagined.</h3>
+          <div class="product-tagline">A personalized illustrated scene.</div>
+          <div class="price">$9.99 <small>one time</small></div>
+          <ul>
+            <li>1 personalized final illustration</li>
+            <li>Based on your people, photos and memory</li>
+            <li>Digital high-resolution delivery</li>
+            <li>Ideal for gifts, social sharing or printing</li>
+          </ul>
+          <a class="btn" href="app/index.html">Create a Snapshot</a>
+        </article>
+
+        <article class="product-card story">
+          <div class="ribbon">Full story</div>
+          <div class="section-kicker">My Story</div>
+          <h3>Your memory, turned into a story.</h3>
+          <div class="product-tagline">A personalized multi-page illustrated story.</div>
+          <div class="price">$19.99 <small>one time</small></div>
+          <ul>
+            <li>Multi-page illustrated narrative</li>
+            <li>Recurring characters and story arc</li>
+            <li>Personalized cover</li>
+            <li>Delivered as a downloadable PDF</li>
+          </ul>
+          <a class="btn" href="app/index.html">Create My Story</a>
+        </article>
       </div>
     </div>
   </section>
 
   <section id="sample">
-    <div class="wrap">
-      <div class="section-kicker">Real product sample</div>
-      <h2 class="section-title">More than an AI image.<br>A story built around your moment.</h2>
-      <p class="section-copy">
-        This sample shows the intended My Story experience: a complete illustrated narrative
-        with recurring characters, a visual theme and a finished digital story.
-      </p>
+    <div class="wrap sample-layout">
+      <div class="sample-main">
+        <img src="assets/samples/page-1.png" alt="My Story sample illustrated page">
+      </div>
 
-      <div class="sample-grid">
-        <div class="sample-feature glass">
-          <img src="assets/samples/page-1.png" alt="My Story sample page" />
-          <div class="sample-copy">
-            <div class="section-kicker">The Summer We Saved the Moon</div>
-            <h3>A family memory turned into an illustrated adventure.</h3>
-            <p>Warm, cinematic and personal — designed to feel like a keepsake, not a template.</p>
-            <div class="actions">
-              <a class="btn" href="My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">View sample story</a>
-            </div>
-          </div>
+      <div class="sample-side">
+        <div class="section-kicker">Product sample</div>
+        <h3>The Summer We Saved the Moon</h3>
+        <p>
+          Here is a glimpse of a finished illustrated story. Open the full sample only if you want to see the complete four-page experience.
+        </p>
+
+        <div class="mini-strip">
+          <div class="mini-panel"><img src="assets/samples/page-2.png" alt="Sample page preview"></div>
+          <div class="mini-panel"><img src="assets/samples/page-3.png" alt="Sample page preview"></div>
         </div>
 
-        <div class="thumbs">
-          <div class="thumb"><img src="assets/samples/page-2.png" alt="Sample story page 2"></div>
-          <div class="thumb"><img src="assets/samples/page-3.png" alt="Sample story page 3"></div>
-          <div class="thumb"><img src="assets/samples/page-4.png" alt="Sample story page 4"></div>
-          <div class="thumb"><img src="assets/samples/cover.png" alt="Sample story cover"></div>
+        <div class="actions">
+          <a class="btn" href="My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">View full sample story</a>
         </div>
       </div>
     </div>
@@ -397,37 +352,31 @@
   <section id="how">
     <div class="wrap">
       <div class="section-kicker">How it works</div>
-      <h2 class="section-title">From your photos to a finished story.</h2>
+      <h2 class="section-title">From your photos to your story.</h2>
       <p class="section-copy">
-        My Story is being built as an automated digital product.
-        You provide the memory. The application creates the narrative and illustrated result.
+        The experience is fully automated — you provide the people and memory, the app creates the result.
       </p>
 
       <div class="flow">
         <div class="step">
-          <div class="step-number">01</div>
+          <div class="step-num">01</div>
           <h3>Add people</h3>
-          <p>Upload the people, pets or places you want to appear.</p>
+          <p>Upload 1–5 people, with one clear photo each and an optional second reference.</p>
         </div>
         <div class="step">
-          <div class="step-number">02</div>
-          <h3>Choose a story</h3>
-          <p>Pick a theme such as family adventure, birthday or love story.</p>
+          <div class="step-num">02</div>
+          <h3>Choose the format</h3>
+          <p>Pick Snapshot for one scene, or My Story for a complete illustrated PDF.</p>
         </div>
         <div class="step">
-          <div class="step-number">03</div>
+          <div class="step-num">03</div>
           <h3>Tell us the moment</h3>
-          <p>Add names, place, occasion and the details that make it yours.</p>
+          <p>Add the memory, place, tone and optional context photos.</p>
         </div>
         <div class="step">
-          <div class="step-number">04</div>
-          <h3>Preview</h3>
-          <p>Review the story direction and key scenes before generation.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">05</div>
-          <h3>Download</h3>
-          <p>Receive the finished illustrated story or book-ready PDF.</p>
+          <div class="step-num">04</div>
+          <h3>Generate</h3>
+          <p>Review the direction, regenerate if needed, and receive the final digital result.</p>
         </div>
       </div>
     </div>
@@ -437,10 +386,6 @@
     <div class="wrap">
       <div class="section-kicker">Story ideas</div>
       <h2 class="section-title">Made for moments worth keeping.</h2>
-      <p class="section-copy">
-        Birthdays, anniversaries, family trips, pets, childhood adventures,
-        love stories — anything that deserves more than another photo in a camera roll.
-      </p>
       <div class="ideas">
         <span class="pill">Birthday</span>
         <span class="pill">Anniversary</span>
@@ -450,50 +395,6 @@
         <span class="pill">Vacation memory</span>
         <span class="pill">Best friends</span>
         <span class="pill">Pet story</span>
-        <span class="pill">Father's Day</span>
-        <span class="pill">Christmas</span>
-      </div>
-    </div>
-  </section>
-
-  <section id="pricing">
-    <div class="wrap">
-      <div class="section-kicker">Simple pricing</div>
-      <h2 class="section-title">Pay for the story.<br>Not another subscription.</h2>
-      <p class="section-copy">Early-access pricing for the first My Story version.</p>
-
-      <div class="pricing">
-        <div class="price-card featured">
-          <div class="badge">MVP</div>
-          <div class="section-kicker">Standard</div>
-          <h3>My Story</h3>
-          <div class="price">$9.99 <small>one time</small></div>
-          <ul>
-            <li>Personalized illustrated digital story</li>
-            <li>Story theme selection</li>
-            <li>Built from your own photos and memories</li>
-            <li>Digital delivery</li>
-          </ul>
-          <div class="actions">
-            <span class="btn" style="cursor:default">Coming soon</span>
-          </div>
-        </div>
-
-        <div class="price-card">
-          <div class="section-kicker">Extended</div>
-          <h3>Story Book</h3>
-          <div class="price">$19.99 <small>planned</small></div>
-          <ul>
-            <li>Longer story format</li>
-            <li>More scenes and customization</li>
-            <li>High-resolution book-ready PDF</li>
-            <li>Gift-ready cover</li>
-          </ul>
-          <p class="notice">
-            Checkout will be enabled after payment-provider approval.
-            Final features may change during early access.
-          </p>
-        </div>
       </div>
     </div>
   </section>
@@ -501,37 +402,32 @@
   <section id="faq">
     <div class="wrap">
       <div class="section-kicker">FAQ</div>
-      <h2 class="section-title">A few things people usually ask.</h2>
+      <h2 class="section-title">A few useful answers.</h2>
 
       <div class="faq">
         <details>
-          <summary>How many photos do I need?</summary>
-          <p>The planned MVP flow will ask for a small set of clear reference photos, typically 3–6 images.</p>
+          <summary>What is the difference between Snapshot and My Story?</summary>
+          <p>Snapshot gives you one final personalized illustration. My Story gives you a complete multi-page illustrated story as a downloadable PDF.</p>
         </details>
-
         <details>
-          <summary>Will the illustrated characters look exactly like us?</summary>
-          <p>The goal is recognizable, consistent illustrated characters, but the result is a creative interpretation rather than a photographic replica.</p>
+          <summary>How many people can I add?</summary>
+          <p>You can add 1–5 people. One clear reference photo per person is required, with a second optional image.</p>
         </details>
-
         <details>
-          <summary>How long does generation take?</summary>
-          <p>Generation time will depend on story length and image processing. The final delivery time will be shown before purchase.</p>
+          <summary>Can I add photos of the actual place or event?</summary>
+          <p>Yes. You can add extra memory photos to help describe the place, atmosphere or moment.</p>
         </details>
-
         <details>
-          <summary>What do I receive?</summary>
-          <p>A digital illustrated story. A higher-resolution book-ready PDF is planned as an extended option.</p>
+          <summary>Is there any manual design work involved?</summary>
+          <p>No. The product flow is designed to be fully automated. You can change your inputs or regenerate automatically.</p>
         </details>
-
         <details>
-          <summary>Do you keep my photos?</summary>
-          <p>The product is being designed to minimize storage and use uploaded photos only for creating the requested story.</p>
+          <summary>Can I use it as a gift?</summary>
+          <p>Yes. Birthdays, anniversaries, trips and family memories are core use cases.</p>
         </details>
-
         <details>
-          <summary>Can I make a story as a gift?</summary>
-          <p>Yes. Birthdays, anniversaries, family memories and special occasions are core use cases for My Story.</p>
+          <summary>Do I need a subscription?</summary>
+          <p>No. Both products use one-time pricing.</p>
         </details>
       </div>
     </div>
@@ -539,10 +435,10 @@
 
   <section>
     <div class="wrap">
-      <div class="cta-band">
+      <div class="launch">
         <div>
           <div class="section-kicker">Early development</div>
-          <h3>The first end-to-end My Story experience is being built now.</h3>
+          <h3>The first end-to-end version is being built now.</h3>
           <p>Checkout will be enabled after payment-provider approval.</p>
         </div>
         <div class="status">Launching soon</div>
