@@ -17,7 +17,7 @@ window.MY_STORY_CONFIG = {
   });
 
   window.addEventListener("load", () => {
-    const scripts = ["upload-controls.js", "ux-flow.js"];
+    const scripts = ["local-preview.js", "upload-controls.js", "ux-flow.js"];
     scripts.forEach(src => {
       if (document.querySelector(`script[src="${src}"]`)) return;
       const script = document.createElement("script");
