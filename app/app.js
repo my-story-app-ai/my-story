@@ -24,6 +24,8 @@ const progressBar = document.getElementById("progressBar");
 const peopleList = document.getElementById("peopleList");
 const plannerStatus = document.getElementById("plannerStatus");
 const generationStatus = document.getElementById("generationStatus");
+const currentStepMeta = document.getElementById("currentStepMeta");
+const currentStepTitle = document.getElementById("currentStepTitle");
 const apiUrl = window.MY_STORY_CONFIG?.storyPlannerApi || "/api/story-plan";
 const snapshotApiUrl = window.MY_STORY_CONFIG?.snapshotGenerationApi || "/api/snapshot-generate";
 
@@ -31,6 +33,9 @@ function gotoStep(step){
   state.step = step;
   panels.forEach(p => p.classList.toggle("active", Number(p.dataset.panel) === step));
   navItems.forEach(n => n.classList.toggle("active", Number(n.dataset.step) === step));
+  const activeNav = navItems.find(n => Number(n.dataset.step) === step);
+  currentStepMeta.textContent = `Step ${step} of 6`;
+  currentStepTitle.textContent = activeNav?.dataset.title || "Create";
   progressBar.style.width = `${step / 6 * 100}%`;
   window.scrollTo({top:0, behavior:"smooth"});
 }
@@ -52,7 +57,6 @@ document.querySelectorAll(".format-card").forEach(card=>{
     card.querySelector(".choose-mark").textContent="Selected";
     state.format=card.dataset.format;
     document.getElementById("storyModeBlock").classList.toggle("hidden", state.format!=="My Story");
-    syncSideCopy();
   });
 });
 
@@ -61,7 +65,6 @@ document.querySelectorAll(".mode-card").forEach(card=>{
     document.querySelectorAll(".mode-card").forEach(c=>c.classList.remove("selected"));
     card.classList.add("selected");
     state.mode=card.dataset.mode;
-    syncSideCopy();
   });
 });
 
@@ -78,16 +81,6 @@ document.querySelectorAll(".source-card").forEach(card=>{
     document.getElementById("reconstructPath").classList.toggle("hidden", state.source!=="reconstruct");
   });
 });
-
-function syncSideCopy(){
-  if(state.format==="My Story"){
-    document.getElementById("sideTitle").textContent="Build the story from the strongest source.";
-    document.getElementById("sideText").textContent=`${state.mode} mode: AI reads the memory and reference images, then proposes the synopsis and 4 scenes.`;
-  }else{
-    document.getElementById("sideTitle").textContent="Create one illustrated moment.";
-    document.getElementById("sideText").textContent="AI plans the image, then v0.8 generates the Snapshot from the approved brief and source photo.";
-  }
-}
 
 function addPerson(){
   if(peopleList.children.length>=MAX_PEOPLE) return;
@@ -333,7 +326,7 @@ async function callPlanner(){
   try{
     const images=await collectImages();
     if(images.length===0) throw new Error("Please add the required source photo before planning.");
-    showPlannerStatus("AI planner is reading your memory and source images...","");
+    showPlannerStatus("Planning your Snapshot...","");
 
     const payload=await fetchJsonWithTimeout(apiUrl,{
       method:"POST",
@@ -376,7 +369,7 @@ function renderAIPlan(plan){
 
   if(!isStory){
     document.getElementById("planHeading").textContent="Your AI Snapshot direction.";
-    document.getElementById("planExplainer").textContent="Approve this brief to generate the final Snapshot from your source image.";
+    document.getElementById("planExplainer").textContent="Approve or regenerate.";
     document.getElementById("snapSource").textContent=plan.source_strategy;
     document.getElementById("snapAction").textContent=plan.action;
     document.getElementById("snapFraming").textContent=plan.framing;
@@ -384,8 +377,8 @@ function renderAIPlan(plan){
   }else{
     document.getElementById("planHeading").textContent="AI synopsis + 4-scene storyboard.";
     document.getElementById("planExplainer").textContent=state.mode==="Easy"
-      ?"Easy mode: accept the AI plan or regenerate another complete version."
-      :"Guided mode: use the AI plan as a starting point, then change individual scenes or add a scene-specific photo.";
+      ?"Accept or regenerate."
+      :"Adjust scenes, then approve.";
     document.getElementById("modeBadge").textContent=`${state.mode} mode`;
     renderScenes(plan.scenes || []);
   }
@@ -475,7 +468,7 @@ async function generateSnapshot(){
       renderStoryApproved();
       return;
     }
-    showGenerationStatus("Generating your Snapshot from the approved brief and source photo...","");
+    showGenerationStatus("Generating Snapshot...","");
     const payload=await fetchJsonWithTimeout(snapshotApiUrl,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -501,7 +494,7 @@ function renderSnapshotResult(payload){
   document.getElementById("resultState").classList.remove("hidden");
   document.getElementById("resultFormatLabel").textContent="SNAPSHOT";
   document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
-  document.getElementById("resultSummary").textContent="Your generated Snapshot is ready. It was built from the approved AI brief and your source image.";
+  document.getElementById("resultSummary").textContent="Your generated Snapshot is ready.";
   const img=document.getElementById("generatedImage");
   img.src=payload.image.dataUrl;
   img.alt=state.lastPlan.title;
@@ -517,8 +510,8 @@ function renderStoryApproved(){
   document.getElementById("resultState").classList.remove("hidden");
   document.getElementById("resultFormatLabel").textContent="MY STORY";
   document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
-  document.getElementById("resultSummary").textContent="Storyboard approved. v0.8 focuses live generation on Snapshot; multi-scene Story generation will use this approved package next.";
-  showGenerationStatus("The My Story storyboard package is approved and ready for the next generation phase.","success");
+  document.getElementById("resultSummary").textContent="Storyboard approved for the next generation phase.";
+  showGenerationStatus("Storyboard approved.","success");
 }
 
 function resetFlow(){
@@ -553,7 +546,6 @@ function resetFlow(){
     card.classList.toggle("selected",selected);
     card.querySelector(".choose-mark").textContent=selected ? "Selected" : "Choose";
   });
-  syncSideCopy();
   hidePlannerStatus();
   hideGenerationStatus();
   document.getElementById("eventPath").classList.remove("hidden");

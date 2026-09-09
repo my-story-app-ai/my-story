@@ -20,30 +20,24 @@
 </header>
 
 <main class="app-shell">
-  <aside class="sidebar">
-    <div class="side-intro">
-      <div class="eyebrow">Create yours</div>
-      <h1 id="sideTitle">Start with a format.</h1>
-      <p id="sideText">Choose Snapshot or My Story, then tell us whether you already have a photo from the moment.</p>
+  <section class="flow-status">
+    <div>
+      <div class="kicker" id="currentStepMeta">Step 1 of 6</div>
+      <h1 id="currentStepTitle">Choose format</h1>
     </div>
 
     <ol class="step-list">
-      <li class="active" data-step="1"><span>1</span><b>Format</b></li>
-      <li data-step="2"><span>2</span><b>Source</b></li>
-      <li data-step="3"><span>3</span><b>Photos</b></li>
-      <li data-step="4"><span>4</span><b>Moment</b></li>
-      <li data-step="5"><span>5</span><b>Plan</b></li>
-      <li data-step="6"><span>6</span><b>Result</b></li>
+      <li class="active" data-step="1" data-title="Choose format"><span>1</span><b>Format</b></li>
+      <li data-step="2" data-title="Choose source"><span>2</span><b>Source</b></li>
+      <li data-step="3" data-title="Add photos"><span>3</span><b>Photos</b></li>
+      <li data-step="4" data-title="Describe memory"><span>4</span><b>Memory</b></li>
+      <li data-step="5" data-title="Review plan"><span>5</span><b>Plan</b></li>
+      <li data-step="6" data-title="Your result"><span>6</span><b>Result</b></li>
     </ol>
-
-    <div class="demo-note">
-      <strong>v0.8 · Live Snapshot</strong>
-      <span>Use real event photos whenever possible; AI plans the image, then generates the approved Snapshot.</span>
-    </div>
-  </aside>
+    <div class="progress"><span id="progressBar"></span></div>
+  </section>
 
   <section class="workspace">
-    <div class="progress"><span id="progressBar"></span></div>
     <div id="plannerStatus" class="planner-status hidden"></div>
 
     <!-- 1 FORMAT -->
@@ -51,29 +45,23 @@
       <div class="panel-head">
         <div>
           <div class="kicker">Step 1 of 6</div>
-          <h2>What do you want to create?</h2>
-          <p>One illustrated moment, or a complete four-scene story.</p>
+          <h2>Choose format</h2>
+          <p>Pick a single image or a short illustrated story.</p>
         </div>
       </div>
 
       <div class="format-grid">
         <button class="format-card selected" data-format="Snapshot" type="button">
-          <div class="format-top">
-            <span class="format-label">Snapshot</span>
-            <span class="format-price">$9.99</span>
-          </div>
-          <h3>One moment. Reimagined.</h3>
-          <p>One personalized final illustration based on your photo or reconstructed scene.</p>
+          <span class="format-label">Snapshot</span>
+          <h3>1 illustrated image</h3>
+          <p>Best for one favorite moment.</p>
           <span class="choose-mark">Selected</span>
         </button>
 
         <button class="format-card" data-format="My Story" type="button">
-          <div class="format-top">
-            <span class="format-label">My Story</span>
-            <span class="format-price">$19.99</span>
-          </div>
-          <h3>Your memory, turned into a story.</h3>
-          <p>A cover and four deliberately different illustrated scenes delivered as a PDF.</p>
+          <span class="format-label">My Story</span>
+          <h3>Cover + 4 scenes</h3>
+          <p>Best for a memory with a beginning, middle and ending.</p>
           <span class="choose-mark">Choose</span>
         </button>
       </div>
@@ -83,11 +71,11 @@
         <div class="mode-grid">
           <button class="mode-card selected" data-mode="Easy" type="button">
             <strong>Easy</strong>
-            <span>AI proposes the synopsis and all 4 scenes. Accept or regenerate.</span>
+            <span>AI proposes everything.</span>
           </button>
           <button class="mode-card" data-mode="Guided" type="button">
             <strong>Guided</strong>
-            <span>AI proposes the scenes, then you can change a scene or add a scene-specific photo.</span>
+            <span>You can adjust each scene.</span>
           </button>
         </div>
       </div>
@@ -102,23 +90,23 @@
       <div class="panel-head">
         <div>
           <div class="kicker">Step 2 of 6</div>
-          <h2>Do you have a photo from the moment?</h2>
-          <p>This determines the simplest way to build your result.</p>
+          <h2>Choose source</h2>
+          <p>Use event photos if you have them.</p>
         </div>
       </div>
 
       <div class="source-grid">
         <button class="source-card selected" data-source="event" type="button">
           <div class="source-icon">◫</div>
-          <strong>Yes, I have event photos</strong>
-          <p>Best option. The photo already gives us the people, place, clothes, atmosphere and relationships.</p>
+          <strong>Event photos</strong>
+          <p>Photos from the actual moment.</p>
           <span class="choose-mark">Selected</span>
         </button>
 
         <button class="source-card" data-source="reconstruct" type="button">
           <div class="source-icon">＋</div>
-          <strong>No, build it from references</strong>
-          <p>Use one reference photo per person, plus an optional place photo and description.</p>
+          <strong>References only</strong>
+          <p>One photo per person when the moment was not photographed.</p>
           <span class="choose-mark">Choose</span>
         </button>
       </div>
@@ -135,31 +123,28 @@
         <div class="panel-head">
           <div>
             <div class="kicker">Step 3 of 6</div>
-            <h2>Upload the moment.</h2>
-            <p>Add 1–3 photos from the actual event. One strong image is enough.</p>
+            <h2>Add photos</h2>
+            <p>Upload 1–3 photos from the actual moment.</p>
           </div>
         </div>
 
         <label class="big-upload">
           <span class="big-upload-icon">＋</span>
           <strong>Select event photos</strong>
-          <small>1–3 images · JPG / PNG</small>
+          <small>JPG, PNG or WEBP</small>
           <input id="eventPhotos" type="file" accept="image/*" multiple hidden>
         </label>
         <div id="eventPreview" class="photo-preview-grid"></div>
 
-        <div class="input-tip">
-          <strong>Why this is the preferred path</strong>
-          <span>One real photo can already anchor faces, clothing, place and atmosphere — fewer inputs, fewer variables.</span>
-        </div>
+        <div class="input-tip">Event photos help preserve faces, clothing, place and atmosphere.</div>
       </div>
 
       <div id="reconstructPath" class="hidden">
         <div class="panel-head split">
           <div>
             <div class="kicker">Step 3 of 6</div>
-            <h2>Build the missing moment.</h2>
-            <p>Add 1–5 people. One reference photo per person is enough.</p>
+            <h2>Add references</h2>
+            <p>One clear photo per person.</p>
           </div>
           <button class="secondary-btn compact" id="addPersonBtn" type="button">+ Add person</button>
         </div>
@@ -192,8 +177,8 @@
       <div class="panel-head">
         <div>
           <div class="kicker">Step 4 of 6</div>
-          <h2>Tell us what matters about this moment.</h2>
-          <p>Keep it simple. The photos carry the visual information; your words tell us what the memory means.</p>
+          <h2>Describe the memory</h2>
+          <p>A few words are enough. The photos handle the visuals.</p>
         </div>
       </div>
 
@@ -205,7 +190,7 @@
           <input id="place" type="text" placeholder="e.g. Kotor, Montenegro">
         </label>
         <label class="full">What happened?
-          <textarea id="memory" rows="6" placeholder="A few sentences are enough. What happened, why does it matter, and what should the story remember?"></textarea>
+          <textarea id="memory" rows="5" placeholder="e.g. Aqua park during the day, open-air cinema in the evening."></textarea>
         </label>
         <label>Creative direction
           <select id="theme">
@@ -239,8 +224,8 @@
       <div class="panel-head">
         <div>
           <div class="kicker">Step 5 of 6</div>
-          <h2 id="planHeading">Your creative plan.</h2>
-          <p id="planExplainer">This is what the generation engine will use.</p>
+          <h2 id="planHeading">Review the plan</h2>
+          <p id="planExplainer">Approve it or regenerate.</p>
         </div>
       </div>
 
@@ -271,7 +256,7 @@
             <strong>4-scene storyboard</strong>
             <span id="modeBadge">Easy mode</span>
           </div>
-          <div class="diversity-rule">Keep the same people and visual world; change location, action, framing and visual anchor across scenes.</div>
+          <div class="diversity-rule">Same people, varied scenes.</div>
         </div>
         <div id="sceneList" class="scene-list"></div>
       </div>
@@ -287,8 +272,8 @@
     <section class="panel" data-panel="6">
       <div id="generatingState" class="generating">
         <div class="loader"></div>
-        <h2>Generating your Snapshot...</h2>
-        <p>Using the approved creative plan and source image to create the final illustration.</p>
+        <h2>Generating...</h2>
+        <p>This usually takes a moment.</p>
         <div class="fake-progress"><span id="fakeProgress"></span></div>
       </div>
 
@@ -296,8 +281,8 @@
         <div class="result-head">
           <div>
             <div class="kicker">Step 6 of 6</div>
-            <h2>Your result.</h2>
-            <p>Snapshot now generates live from your approved brief. My Story storyboards are packaged for the next generation phase.</p>
+            <h2>Your result</h2>
+            <p>Download the image or go back to adjust the plan.</p>
           </div>
           <span class="demo-tag">v0.8</span>
         </div>
