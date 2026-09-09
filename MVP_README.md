@@ -23,3 +23,8 @@ No manual/human intervention is part of the product flow.
 - 2-column memory photo grid
 - swipeable final story preview
 - tuned layouts for 360–430px widths
+
+## v0.1.2 Landing cleanup
+- hero cover is now only a visual product teaser
+- removed duplicate sample badge/callout from hero
+- retained a single dedicated Real Product Sample section
