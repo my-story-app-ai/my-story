@@ -48,3 +48,15 @@ No manual/human intervention is part of the product flow.
 - app visually continues the landing instead of switching to a dark SaaS theme
 - mobile behavior retained
 - sample area shortened further
+
+## v0.4 Functional demo
+- true end-to-end clickable demo, not only an upload page
+- first step chooses Snapshot ($9.99) or My Story ($19.99)
+- 1–5 people flow
+- style/theme selection
+- memory details + optional context photos
+- automatic preview generation
+- regenerate without manual intervention
+- separate final result experience for Snapshot and My Story
+- sample PDF available in My Story result
+- same paper / graphic-novel visual identity throughout
