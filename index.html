@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="My Story turns your photos and memories into personalized illustrated snapshots and stories that preserve how the moment felt." />
   <title>My Story — A story remembers the feeling.</title>
+  <link rel="icon" type="image/png" href="app/assets/favicon.png" />
   <style>
     :root{
       --paper:#e9dfc8;--paper-2:#f4ecd9;--paper-3:#fffaf0;--ink:#241f1a;--muted:#695f54;
@@ -17,7 +18,7 @@
     header{position:sticky;top:0;z-index:30;background:rgba(233,223,200,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(44,39,34,.16)}
     nav{height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
     .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.04em;font-size:1.2rem;text-decoration:none}
-    .brand-mark{width:34px;height:34px;border:2px solid var(--line);background:var(--paper-3);display:grid;place-items:center;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--line);font-family:Georgia,serif;font-weight:900}
+    .brand-mark{width:42px;height:42px;object-fit:contain;display:block;flex:0 0 42px}
     .navlinks{display:flex;gap:20px;align-items:center}.navlinks a{text-decoration:none;color:var(--muted);font-size:.93rem;font-weight:650}.navlinks a.btn{color:#fff}
     .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 18px;border:2px solid var(--line);border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:800;box-shadow:4px 4px 0 var(--line);transition:.15s ease}.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--line)}.btn.secondary{background:var(--paper-3);color:var(--ink)}.btn.small{min-height:40px;padding:9px 14px;font-size:.9rem}
     .hero{padding:58px 0 46px}.hero-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:44px;align-items:center}
@@ -42,7 +43,7 @@
 <header>
   <div class="wrap">
     <nav>
-      <a class="brand" href="#top"><span class="brand-mark">M</span><span>My Story</span></a>
+      <a class="brand" href="#top"><img class="brand-mark" src="app/assets/brand-mark.png" alt="" aria-hidden="true" /><span>My Story</span></a>
       <div class="navlinks">
         <a href="#how">How it works</a>
         <a href="#sample">Sample</a>

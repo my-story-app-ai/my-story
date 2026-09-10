@@ -4,18 +4,6 @@
   display:none!important;
 }
 
-/* Brand mark: real My Story brain / speech-bubble PNG asset. */
-.brand-mark{
-  width:42px!important;
-  height:42px!important;
-  flex:0 0 42px;
-  border:0!important;
-  box-shadow:none!important;
-  background:transparent url("assets/brand-mark.png") center/contain no-repeat!important;
-  font-size:0!important;
-  line-height:0!important;
-}
-
 /* Product names are the primary choice; product description is secondary. */
 .format-label{
   display:block;
@@ -35,11 +23,6 @@
 }
 
 @media(max-width:700px){
-  .brand-mark{
-    width:38px!important;
-    height:38px!important;
-    flex-basis:38px;
-  }
   .format-label{font-size:1.4rem!important}
   .format-card h3{font-size:1.08rem!important}
 }
