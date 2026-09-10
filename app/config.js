@@ -2,7 +2,8 @@
 window.MY_STORY_CONFIG = {
   storyPlannerApi: "https://my-story-api-n5z9.vercel.app/api/story-plan",
   snapshotGenerationApi: "https://my-story-api-n5z9.vercel.app/api/snapshot-generate",
-  devBypassPayment: false
+  devBypassPayment: false,
+  debugEvents: false
 };
 
 /* UX helpers are loaded separately so the existing app flow and AI logic stay stable. */

@@ -50,6 +50,20 @@ function gotoStep(step){
   currentStepTitle.textContent = activeNav?.dataset.title || "Create";
   progressBar.style.width = `${step / TOTAL_STEPS * 100}%`;
   window.scrollTo({top:0, behavior:"smooth"});
+  logFunnelEvent("step_view", { step });
+}
+
+function logFunnelEvent(name, detail={}){
+  const eventDetail={
+    name,
+    step: state.step,
+    format: state.format,
+    mode: state.mode,
+    source: state.source,
+    ...detail
+  };
+  window.dispatchEvent(new CustomEvent("my-story:funnel", { detail: eventDetail }));
+  if(window.MY_STORY_CONFIG?.debugEvents) console.debug("[My Story]", eventDetail);
 }
 
 document.addEventListener("click", e=>{
@@ -70,6 +84,7 @@ document.querySelectorAll(".format-card").forEach(card=>{
     state.format=card.dataset.format;
     document.getElementById("storyModeBlock").classList.toggle("hidden", state.format!=="My Story");
     markInputsChanged();
+    logFunnelEvent("format_selected", { format: state.format });
   });
 });
 
@@ -79,6 +94,7 @@ document.querySelectorAll(".mode-card").forEach(card=>{
     card.classList.add("selected");
     state.mode=card.dataset.mode;
     markInputsChanged();
+    logFunnelEvent("mode_selected", { mode: state.mode });
   });
 });
 
@@ -94,6 +110,7 @@ document.querySelectorAll(".source-card").forEach(card=>{
     document.getElementById("eventPath").classList.toggle("hidden", state.source!=="event");
     document.getElementById("reconstructPath").classList.toggle("hidden", state.source!=="reconstruct");
     markInputsChanged();
+    logFunnelEvent("source_selected", { source: state.source });
   });
 });
 
@@ -179,6 +196,7 @@ function renderFiles(input, targetId, max){
     hidePlannerStatus();
   }
   markInputsChanged();
+  logFunnelEvent("photos_selected", { target: targetId, selected: selected.length, used: files.length });
 }
 
 document.getElementById("eventPhotos").addEventListener("change",e=>renderFiles(e.target,"eventPreview",maxEventPhotos()));
@@ -189,6 +207,7 @@ document.querySelectorAll("#occasion,#place,#memory,#storyBeginning,#storyHighli
 document.querySelectorAll("#theme,#tone").forEach(input=>{
   input.addEventListener("change",markInputsChanged);
 });
+document.addEventListener("my-story:input-changed",markInputsChanged);
 
 document.getElementById("photosContinueBtn").addEventListener("click", ()=>{
   if(state.source==="event"){
@@ -504,10 +523,12 @@ async function callPlanner(){
     configureUnlock();
     gotoStep(5);
     showPlannerStatus("Free preview is ready.","success");
+    logFunnelEvent("preview_created", { imageCount: images.length });
   }catch(err){
     console.error(err);
     showPlannerStatus(friendlyPlannerError(err),"error");
     showPlannerRetry();
+    logFunnelEvent("planner_failed", { status: err?.status || null, message: err?.message || "Planner failed" });
   }finally{
     btn.disabled=false;
     btn.textContent="Create free preview";
@@ -608,9 +629,11 @@ async function generateSnapshot(){
   try{
     if(state.format!=="Snapshot"){
       renderStoryApproved();
+      logFunnelEvent("story_generation_placeholder_viewed");
       return;
     }
     showGenerationStatus("Generating Snapshot...","");
+    logFunnelEvent("snapshot_generation_started");
     const payload=await fetchJsonWithTimeout(snapshotApiUrl,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -620,6 +643,7 @@ async function generateSnapshot(){
     if(!hasText(payload.image?.dataUrl)) throw new Error("Image generation finished without an image.");
     state.lastSnapshot=payload.image;
     renderSnapshotResult(payload);
+    logFunnelEvent("snapshot_generation_succeeded");
   }catch(error){
     console.error(error);
     document.getElementById("generatingState").classList.add("hidden");
@@ -627,6 +651,7 @@ async function generateSnapshot(){
     document.getElementById("resultPlanTitle").textContent=state.lastPlan?.title || "Snapshot generation";
     document.getElementById("resultSummary").textContent="The approved creative plan is safe. Generation can be retried without changing your inputs.";
     showGenerationStatus(`Snapshot generation error: ${error.message}`,"error");
+    logFunnelEvent("snapshot_generation_failed", { status: error?.status || null, message: error?.message || "Generation failed" });
   }
 }
 
@@ -719,6 +744,7 @@ document.getElementById("continueToUnlockBtn").addEventListener("click",()=>{
     showPlannerStatus("Create a fresh free preview before continuing.","error");
     return;
   }
+  logFunnelEvent("unlock_viewed");
   configureUnlock();
   gotoStep(6);
 });
@@ -731,12 +757,14 @@ document.getElementById("unlockBtn").addEventListener("click",()=>{
   }
   if(devBypassPayment){
     state.payment.status="paid";
+    logFunnelEvent("dev_payment_bypass_used");
     generateSnapshot();
     return;
   }
   state.payment.status="not_started";
   state.payment.checkoutId=null;
   showUnlockStatus("Checkout integration coming next. No payment has been taken.","");
+  logFunnelEvent("unlock_clicked", { paymentStatus: state.payment.status });
 });
 
 retryPlannerBtn.addEventListener("click",callPlanner);

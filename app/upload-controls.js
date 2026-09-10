@@ -26,6 +26,10 @@
     input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
+  function notifyInputChanged() {
+    document.dispatchEvent(new CustomEvent("my-story:input-changed"));
+  }
+
   function fileKey(file) {
     return `${file.name}:${file.size}:${file.lastModified}`;
   }
@@ -37,6 +41,7 @@
       toolbar.id = "eventUploadToolbar";
       toolbar.className = "upload-toolbar hidden";
       toolbar.innerHTML = `
+        <span class="upload-count" id="eventUploadCount"></span>
         <button type="button" class="upload-control-btn" id="eventAddReplaceBtn">Add / replace photos</button>
         <button type="button" class="upload-control-btn danger" id="eventClearBtn">Clear all</button>
       `;
@@ -44,7 +49,7 @@
 
       const addInput = document.createElement("input");
       addInput.type = "file";
-      addInput.accept = "image/*";
+      addInput.accept = "image/jpeg,image/png,image/webp";
       addInput.multiple = true;
       addInput.hidden = true;
       addInput.id = "eventPhotoAddInput";
@@ -93,6 +98,8 @@
     const files = [...eventInput.files].slice(0, max);
     const toolbar = ensureEventToolbar();
     toolbar.classList.toggle("hidden", files.length === 0);
+    const count = toolbar.querySelector("#eventUploadCount");
+    if (count) count.textContent = files.length ? `${files.length} / ${max} selected` : "";
 
     if (!files.length) {
       eventPreview.innerHTML = "";
@@ -227,6 +234,7 @@
         slot.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="Person reference">`;
         replacementInput.remove();
         addPersonPhotoControls(card);
+        notifyInputChanged();
       }, { once: true });
       replacementInput.click();
     });
@@ -235,6 +243,7 @@
       slot._file = null;
       delete slot.dataset.hasFile;
       slot.innerHTML = `<label>Reference photo<br><small>1 image</small><input type="file" class="person-photo" accept="image/jpeg,image/png,image/webp" hidden></label>`;
+      notifyInputChanged();
       const newInput = slot.querySelector(".person-photo");
       newInput.addEventListener("change", e => {
         const file = e.target.files[0];
@@ -248,6 +257,7 @@
         slot.dataset.hasFile = "1";
         slot.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="Person reference">`;
         addPersonPhotoControls(card);
+        notifyInputChanged();
       });
     });
 
