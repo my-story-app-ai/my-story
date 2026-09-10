@@ -26,6 +26,10 @@
     return document.querySelector('.format-card.selected')?.dataset.format || 'Snapshot';
   }
 
+  function selectedSource(){
+    return document.querySelector('.source-card.selected')?.dataset.source || 'event';
+  }
+
   function normalizeText(value=''){
     return String(value)
       .toLocaleLowerCase()
@@ -47,6 +51,8 @@
   }
 
   function readRawDetails(){
+    const place=$('place')?.value || '';
+    const reconstructPlace=selectedSource()==='reconstruct' ? $('placeDescription')?.value || '' : '';
     return {
       memory: $('memory')?.value || '',
       storyBeginning: $('storyBeginning')?.value || '',
@@ -55,7 +61,7 @@
       storyEnding: $('storyEnding')?.value || '',
       storyDetail: $('storyDetail')?.value || '',
       occasion: $('occasion')?.value || '',
-      place: $('place')?.value || $('placeDescription')?.value || '',
+      place: place || reconstructPlace,
       theme: $('theme')?.value || 'Illustrated keepsake',
       tone: $('tone')?.value || ''
     };
@@ -310,6 +316,7 @@
   function renderLocalPreview(){
     const format=selectedFormat();
     const details=derivePreviewDetails(readRawDetails());
+    if(format==='My Story') details.memory='';
 
     if(format==='My Story'){
       const hasStoryInput=[

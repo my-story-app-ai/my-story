@@ -189,14 +189,17 @@ document.getElementById("photosContinueBtn").addEventListener("click", ()=>{
 });
 
 function collect(){
+  const plannerMemory=window.MyStoryFormState?.getPlannerMemory?.() ?? document.getElementById("memory").value;
+  const place=document.getElementById("place").value.trim();
+  const reconstructPlace=state.source==="reconstruct" ? document.getElementById("placeDescription").value.trim() : "";
   return {
     people:[...peopleList.querySelectorAll(".person-card")].map(c=>({
       name:c.querySelector(".person-name")?.value.trim() || "",
       role:c.querySelector(".person-role")?.value.trim() || ""
     })).filter(p=>p.name),
     occasion:document.getElementById("occasion").value.trim(),
-    place:document.getElementById("place").value.trim() || document.getElementById("placeDescription").value.trim(),
-    memory:document.getElementById("memory").value.trim(),
+    place:place || reconstructPlace,
+    memory:String(plannerMemory).trim(),
     theme:document.getElementById("theme").value,
     tone:document.getElementById("tone").value
   };

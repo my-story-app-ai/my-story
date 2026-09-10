@@ -197,20 +197,24 @@
   }
 
   function composeStoryMemory(){
-    if(!isStory()) return;
+    if(!isStory()) return memory.value;
     const beginning = document.getElementById('storyBeginning').value.trim();
     const highlight = document.getElementById('storyHighlight').value.trim();
     const change = document.getElementById('storyChange').value.trim();
     const ending = document.getElementById('storyEnding').value.trim();
     const detail = document.getElementById('storyDetail').value.trim();
-    memory.value = [
+    const userParts = [
       beginning && `How it began: ${beginning}`,
       highlight && `Most memorable moment: ${highlight}`,
       change && `What changed: ${change}`,
       ending && `How it ended: ${ending}`,
-      detail && `Detail that must not be lost: ${detail}`,
+      detail && `Detail that must not be lost: ${detail}`
+    ].filter(Boolean);
+    if(!userParts.length) return '';
+    return [
+      ...userParts,
       'Build a four-scene story with a clear progression: setup, highlight, change, resolution. Keep the same people consistent, but make adjacent scenes meaningfully different in location, time, action, framing or visual anchor. Do not invent major events the user did not describe.'
-    ].filter(Boolean).join('\n');
+    ].join('\n');
   }
 
   function syncMemoryMode(){
@@ -226,9 +230,15 @@
       snapshotBlock.classList.remove('hidden');
       heading.textContent = 'Describe the memory';
       intro.textContent = 'The photos show what happened. Tell us what you want to remember about how it felt.';
-      if(snapshotDraft) memory.value = snapshotDraft;
+      memory.value = snapshotDraft;
     }
   }
+
+  window.MyStoryFormState = {
+    getPlannerMemory(){
+      return isStory() ? composeStoryMemory() : memory.value;
+    }
+  };
 
   document.querySelectorAll('.format-card').forEach(card => card.addEventListener('click', syncMemoryMode));
   storyInputs.forEach(input => input.addEventListener('input', composeStoryMemory));
