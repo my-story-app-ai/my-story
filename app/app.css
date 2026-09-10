@@ -133,6 +133,10 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .planner-status.success{
   background:#e2e2ba;
 }
+.status-retry{
+  width:auto;
+  margin-top:10px;
+}
 .plan-loading{
   display:flex;
   align-items:center;

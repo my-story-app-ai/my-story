@@ -19,6 +19,8 @@ const state = {
   lastDetails: null,
   lastImages: [],
   lastSnapshot: null,
+  inputRevision: 0,
+  planRevision: null,
   payment: {
     status: "not_started",
     checkoutId: null
@@ -30,6 +32,7 @@ const navItems = [...document.querySelectorAll("[data-step]")];
 const progressBar = document.getElementById("progressBar");
 const peopleList = document.getElementById("peopleList");
 const plannerStatus = document.getElementById("plannerStatus");
+const retryPlannerBtn = document.getElementById("retryPlannerBtn");
 const generationStatus = document.getElementById("generationStatus");
 const unlockStatus = document.getElementById("unlockStatus");
 const currentStepMeta = document.getElementById("currentStepMeta");
@@ -66,6 +69,7 @@ document.querySelectorAll(".format-card").forEach(card=>{
     card.querySelector(".choose-mark").textContent="Selected";
     state.format=card.dataset.format;
     document.getElementById("storyModeBlock").classList.toggle("hidden", state.format!=="My Story");
+    markInputsChanged();
   });
 });
 
@@ -74,6 +78,7 @@ document.querySelectorAll(".mode-card").forEach(card=>{
     document.querySelectorAll(".mode-card").forEach(c=>c.classList.remove("selected"));
     card.classList.add("selected");
     state.mode=card.dataset.mode;
+    markInputsChanged();
   });
 });
 
@@ -88,6 +93,7 @@ document.querySelectorAll(".source-card").forEach(card=>{
     state.source=card.dataset.source;
     document.getElementById("eventPath").classList.toggle("hidden", state.source!=="event");
     document.getElementById("reconstructPath").classList.toggle("hidden", state.source!=="reconstruct");
+    markInputsChanged();
   });
 });
 
@@ -106,8 +112,10 @@ function addPerson(){
     </div>`;
   peopleList.appendChild(card);
   card.querySelector(".remove-person").addEventListener("click", ()=>{
-    if(peopleList.children.length>1){card.remove();syncRemove();}
+    if(peopleList.children.length>1){card.remove();syncRemove();markInputsChanged();}
   });
+  card.querySelector(".person-name").addEventListener("input",markInputsChanged);
+  card.querySelector(".person-role").addEventListener("input",markInputsChanged);
   card.querySelector(".person-photo").addEventListener("change", e=>{
     const file=e.target.files[0];
     if(!file) return;
@@ -115,6 +123,7 @@ function addPerson(){
     if(validation){
       e.target.value="";
       showPlannerStatus(validation,"error");
+      showPlannerRetry();
       return;
     }
     const slot=e.target.closest(".photo-slot");
@@ -122,6 +131,7 @@ function addPerson(){
     slot.innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Person reference">`;
     slot._file=file;
     hidePlannerStatus();
+    markInputsChanged();
   });
   syncRemove();
 }
@@ -151,6 +161,8 @@ function renderFiles(input, targetId, max){
     input.value="";
     document.getElementById(targetId).innerHTML="";
     showPlannerStatus(problem,"error");
+    showPlannerRetry();
+    markInputsChanged();
     return;
   }
   const files=selected.slice(0,max);
@@ -166,10 +178,17 @@ function renderFiles(input, targetId, max){
   }else{
     hidePlannerStatus();
   }
+  markInputsChanged();
 }
 
 document.getElementById("eventPhotos").addEventListener("change",e=>renderFiles(e.target,"eventPreview",maxEventPhotos()));
 document.getElementById("placePhoto").addEventListener("change",e=>renderFiles(e.target,"placePreview",1));
+document.querySelectorAll("#occasion,#place,#memory,#storyBeginning,#storyHighlight,#storyChange,#storyEnding,#storyDetail,#placeDescription").forEach(input=>{
+  input.addEventListener("input",markInputsChanged);
+});
+document.querySelectorAll("#theme,#tone").forEach(input=>{
+  input.addEventListener("change",markInputsChanged);
+});
 
 document.getElementById("photosContinueBtn").addEventListener("click", ()=>{
   if(state.source==="event"){
@@ -273,6 +292,34 @@ function showPlannerStatus(message,type=""){
 
 function hidePlannerStatus(){
   plannerStatus.classList.add("hidden");
+  hidePlannerRetry();
+}
+
+function showPlannerRetry(){
+  retryPlannerBtn.classList.remove("hidden");
+}
+
+function hidePlannerRetry(){
+  retryPlannerBtn.classList.add("hidden");
+}
+
+function resetPayment(){
+  state.payment={status:"not_started",checkoutId:null};
+}
+
+function markInputsChanged(){
+  state.inputRevision += 1;
+  if(state.lastPlan || state.publicPreview || state.lastSnapshot || state.payment.status!=="not_started"){
+    state.lastPlan=null;
+    state.publicPreview=null;
+    state.lastDetails=null;
+    state.lastImages=[];
+    state.lastSnapshot=null;
+    state.planRevision=null;
+    resetPayment();
+    hideUnlockStatus();
+    showPlannerStatus("Your changes are saved. Create a fresh free preview before continuing.","");
+  }
 }
 
 function showGenerationStatus(message,type=""){
@@ -302,15 +349,52 @@ async function fetchJsonWithTimeout(url, options, timeoutMs){
     const response=await fetch(url,{...options,signal:controller.signal});
     const payload=await response.json().catch(()=>({}));
     if(!response.ok){
-      throw new Error(payload.error || payload.detail || `Request failed (${response.status})`);
+      const error=new Error(payload.error || payload.detail || `Request failed (${response.status})`);
+      error.status=response.status;
+      error.payload=payload;
+      throw error;
     }
     return payload;
   }catch(error){
     if(error.name==="AbortError") throw new Error("The request took too long. Please try again.");
+    if(error instanceof TypeError) throw new Error("We could not reach the AI service. Please check your connection and try again.");
     throw error;
   }finally{
     clearTimeout(timer);
   }
+}
+
+function friendlyPlannerError(error){
+  const status=error?.status;
+  const message=String(error?.message || "");
+  if(status===400) return message || "Some details are missing. Please review the form and try again.";
+  if(status===401 || status===403) return "The AI service is not accepting this request right now. Please try again later.";
+  if(status===429) return "The AI service is busy or out of quota. Please try again later.";
+  if(status>=500) return "The AI Story Planner is temporarily unavailable. Your inputs are safe; please try again.";
+  if(message.toLowerCase().includes("too long")) return "The AI Story Planner took too long. Your inputs are safe; please try again.";
+  return message || "AI Story Planner failed. Your inputs are safe; please try again.";
+}
+
+function validatePreflight(data){
+  const issues=[];
+  if(!data.memory) issues.push(state.format==="My Story" ? "Add at least one Story memory answer." : "Tell us a little about the moment.");
+  if(state.source==="event"){
+    const count=document.getElementById("eventPhotos").files.length;
+    if(count<1) issues.push("Add at least one event photo.");
+    if(count>maxEventPhotos()) issues.push(`Only the first ${maxEventPhotos()} photos will be used.`);
+  }else{
+    const cards=[...peopleList.querySelectorAll(".person-card")];
+    const completePeople=cards.filter(card=>card.querySelector(".person-name").value.trim() && card.querySelector(".photo-slot")?._file);
+    if(completePeople.length<1) issues.push("Add at least one person with a name and reference photo.");
+    if(cards.some(card=>card.querySelector(".person-name").value.trim() && !(card.querySelector(".photo-slot")?._file))){
+      issues.push("Every named person needs one reference photo.");
+    }
+  }
+  return issues;
+}
+
+function hasApprovedPreview(){
+  return Boolean(state.lastPlan && state.publicPreview && state.lastDetails && state.lastImages.length && state.planRevision===state.inputRevision);
 }
 
 function hasText(value){
@@ -379,8 +463,9 @@ function buildPublicPreview(plan, details){
 
 async function callPlanner(){
   const data=collect();
-  if(!data.memory){
-    showPlannerStatus("Tell us a little about the moment first.","error");
+  const issues=validatePreflight(data);
+  if(issues.some(issue=>!issue.startsWith("Only the first"))){
+    showPlannerStatus(issues[0],"error");
     return;
   }
 
@@ -391,7 +476,8 @@ async function callPlanner(){
   try{
     const images=await collectImages();
     if(images.length===0) throw new Error("Please add the required source photo before planning.");
-    showPlannerStatus("Creating your free preview...","");
+    showPlannerStatus(issues.find(issue=>issue.startsWith("Only the first")) || "Creating your free preview...","");
+    hidePlannerRetry();
 
     const payload=await fetchJsonWithTimeout(apiUrl,{
       method:"POST",
@@ -412,14 +498,16 @@ async function callPlanner(){
     state.lastDetails=data;
     state.lastImages=images;
     state.lastSnapshot=null;
-    state.payment={status:"not_started",checkoutId:null};
+    state.planRevision=state.inputRevision;
+    resetPayment();
     renderPublicPreview(state.publicPreview);
     configureUnlock();
     gotoStep(5);
     showPlannerStatus("Free preview is ready.","success");
   }catch(err){
     console.error(err);
-    showPlannerStatus(`AI Story Planner error: ${err.message}`,"error");
+    showPlannerStatus(friendlyPlannerError(err),"error");
+    showPlannerRetry();
   }finally{
     btn.disabled=false;
     btn.textContent="Create free preview";
@@ -498,9 +586,9 @@ function approvedPackage(){
 }
 
 async function generateSnapshot(){
-  if(!state.lastPlan || !state.lastDetails){
+  if(!hasApprovedPreview()){
     showPlannerStatus("Build the free preview first.","error");
-    gotoStep(5);
+    gotoStep(4);
     return;
   }
   if(state.payment.status!=="paid" && !devBypassPayment){
@@ -590,7 +678,9 @@ function resetFlow(){
   state.lastDetails=null;
   state.lastImages=[];
   state.lastSnapshot=null;
-  state.payment={status:"not_started",checkoutId:null};
+  state.inputRevision=0;
+  state.planRevision=null;
+  resetPayment();
   document.querySelectorAll(".format-card").forEach(card=>{
     const selected=card.dataset.format==="Snapshot";
     card.classList.toggle("selected",selected);
@@ -624,12 +714,23 @@ function slugify(value){
 document.getElementById("planBtn").addEventListener("click",callPlanner);
 
 document.getElementById("continueToUnlockBtn").addEventListener("click",()=>{
+  if(!hasApprovedPreview()){
+    gotoStep(4);
+    showPlannerStatus("Create a fresh free preview before continuing.","error");
+    return;
+  }
   configureUnlock();
   gotoStep(6);
 });
 
 document.getElementById("unlockBtn").addEventListener("click",()=>{
+  if(!hasApprovedPreview()){
+    gotoStep(4);
+    showPlannerStatus("Create a fresh free preview before unlocking.","error");
+    return;
+  }
   if(devBypassPayment){
+    state.payment.status="paid";
     generateSnapshot();
     return;
   }
@@ -638,4 +739,5 @@ document.getElementById("unlockBtn").addEventListener("click",()=>{
   showUnlockStatus("Checkout integration coming next. No payment has been taken.","");
 });
 
+retryPlannerBtn.addEventListener("click",callPlanner);
 document.getElementById("startOverBtn").addEventListener("click",resetFlow);
