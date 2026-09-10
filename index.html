@@ -29,15 +29,38 @@
     section{padding:58px 0}.section-title{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.15rem,4vw,3.7rem);line-height:1;letter-spacing:-.04em;margin:0 0 14px}.section-copy{color:var(--muted);max-width:760px;margin:0 0 26px}
     .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.why-card{background:rgba(255,250,240,.72);border:2px solid var(--line);padding:22px;min-height:170px}.why-card h3{font-family:Georgia,serif;font-size:1.55rem;margin:0 0 8px}.why-card p{color:var(--muted);margin:0}.why-card.accent{background:var(--paper-3);box-shadow:6px 6px 0 var(--line)}
     .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.step{background:rgba(255,250,240,.68);border:2px solid var(--line);padding:20px;min-height:165px}.step-num{font-family:Georgia,serif;font-weight:900;font-size:1.3rem;color:var(--accent-dark)}.step h3{margin:9px 0 6px;font-family:Georgia,serif;font-size:1.3rem}.step p{margin:0;color:var(--muted);font-size:.92rem}
-    .formats{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.format{border:2px solid var(--line);background:var(--paper-3);padding:18px}.format strong{font-family:Georgia,serif;font-size:1.25rem}.format span{display:block;color:var(--muted);margin-top:3px}.format .price{margin-top:9px;font-weight:900;color:var(--ink)}
     .sample-layout{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:center}.sample-main{transform:rotate(-.5deg)}.sample-side h3{font-family:Georgia,serif;font-size:2rem;line-height:1.05;margin:0 0 12px}.sample-side p{color:var(--muted)}.sample-origin{border-left:4px solid var(--mustard);padding:10px 0 10px 14px;margin:16px 0;font-weight:750}.mini-strip{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini-panel{background:var(--paper-3);padding:6px;border:2px solid var(--line);aspect-ratio:16/10;overflow:hidden}.mini-panel img{width:100%;height:100%;object-fit:cover;border:1px solid var(--line)}
     .ideas{display:flex;gap:9px;flex-wrap:wrap}.pill{border:2px solid var(--line);background:var(--paper-3);padding:8px 12px;border-radius:999px;font-weight:700;font-size:.9rem}
     .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}details{background:rgba(255,250,240,.72);border:2px solid var(--line);padding:16px 18px}summary{cursor:pointer;font-weight:800}details p{color:var(--muted);margin-bottom:0}
     .final-cta{background:var(--paper-3);border:3px solid var(--line);box-shadow:7px 7px 0 rgba(44,39,34,.92);padding:30px;display:flex;justify-content:space-between;gap:22px;align-items:center}.final-cta h3{font-family:Georgia,serif;font-size:2rem;margin:0 0 6px}.final-cta p{margin:0;color:var(--muted);max-width:680px}
     .welcome-modal[hidden]{display:none}.welcome-modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:14px;background:rgba(36,31,26,.2);backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}.welcome-card{position:relative;width:86vw;max-width:520px;max-height:calc(100vh - 28px);overflow:auto;border:3px solid rgba(44,39,34,.78);background-color:rgba(255,250,240,.94);background-image:repeating-linear-gradient(0deg,rgba(70,54,35,.018) 0,rgba(70,54,35,.018) 1px,transparent 1px,transparent 4px);box-shadow:8px 8px 0 rgba(44,39,34,.72);padding:22px;text-align:center}.welcome-close{position:absolute;right:10px;top:10px;width:34px;height:34px;border:0;background:transparent;color:var(--muted);font-size:1.45rem;line-height:1;cursor:pointer}.welcome-logo{width:min(280px,74%);height:auto;object-fit:contain;margin:0 auto 14px}.welcome-card h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.65rem,5.8vw,2.35rem);line-height:1.04;letter-spacing:-.035em;margin:0 18px 14px}.welcome-card p{margin:0 auto 8px;color:var(--muted);font-size:1rem;max-width:410px}.welcome-actions{display:grid;gap:10px;margin:20px 0 8px}.welcome-actions .btn{width:100%}.welcome-link{border:0;background:transparent;color:var(--accent-dark);font-weight:850;text-decoration:underline;text-underline-offset:4px;min-height:40px;cursor:pointer}.welcome-price{font-size:.9rem;color:var(--muted);font-weight:750}
     footer{border-top:1px solid rgba(44,39,34,.16);padding:26px 0 36px;color:var(--muted);font-size:.9rem}.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer-links{display:flex;gap:16px;flex-wrap:wrap}.footer-links a{text-decoration:none}
-    @media(max-width:900px){.hero-grid,.why-grid,.sample-layout,.faq{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.formats{grid-template-columns:1fr}.hero-frame,.sample-main{transform:none}}
+    @media(max-width:900px){.hero-grid,.why-grid,.sample-layout,.faq{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.hero-frame,.sample-main{transform:none}}
     @media(max-width:650px){.wrap{width:min(100% - 20px,1160px)}.navlinks a:not(.btn){display:none}nav{height:62px}.hero{padding:44px 0 34px}h1{font-size:3.15rem}.lead{font-size:1rem}.actions{display:grid;grid-template-columns:1fr}.btn{width:100%}.hero-frame{box-shadow:5px 5px 0 rgba(44,39,34,.92)}section{padding:44px 0}.mini-strip{grid-template-columns:1fr 1fr}.final-cta{flex-direction:column;align-items:flex-start}.welcome-modal{padding:0}.welcome-card{width:86vw;max-width:390px;padding:18px 16px 16px;box-shadow:5px 5px 0 rgba(44,39,34,.7)}.welcome-logo{width:min(220px,76%);margin-bottom:12px}.welcome-card h2{font-size:1.55rem}.welcome-card p{font-size:.96rem}.welcome-actions{margin-top:16px}}
+    :root{--display:"Comic Sans MS","Comic Neue","Comic Sans",cursive}
+    .why-card h3,.step h3,.sample-side h3,.final-cta h3{font-family:var(--display);font-weight:800;letter-spacing:0;line-height:1.08}
+    .step-num{font-family:var(--display);letter-spacing:0}
+    .btn{border:0;border-radius:999px;background:linear-gradient(180deg,#bd5a49,#9f3f35);color:#fffaf0;box-shadow:0 14px 28px rgba(127,48,41,.22),0 1px 0 rgba(255,255,255,.18) inset}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(127,48,41,.25),0 1px 0 rgba(255,255,255,.2) inset}
+    .btn:not(.secondary)::after{content:"\2192";margin-left:8px;font-weight:900;line-height:1}
+    .btn.secondary{border:1px solid rgba(44,39,34,.52);background:rgba(255,250,240,.76);color:var(--ink);box-shadow:0 9px 20px rgba(52,42,31,.12)}
+    .eyebrow,.section-kicker{border-radius:999px}
+    .hero-output{display:grid;gap:14px;align-self:stretch}
+    .product-option{position:relative;display:grid;gap:14px;border:1px solid rgba(44,39,34,.58);background:linear-gradient(180deg,rgba(255,250,240,.88),rgba(244,236,217,.72));padding:20px;box-shadow:0 16px 38px rgba(52,42,31,.12),0 1px 0 rgba(255,255,255,.5) inset}
+    .product-option h2{font-family:var(--display);font-size:1.65rem;line-height:1.08;margin:7px 0 6px;letter-spacing:0}
+    .product-option p{margin:0;color:var(--muted)}
+    .product-output-type{display:inline-flex;border:1px solid rgba(44,39,34,.2);border-radius:999px;background:rgba(201,150,60,.18);padding:5px 9px;color:var(--accent-dark);font-size:.74rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+    .product-price{width:max-content;border:1px solid rgba(44,39,34,.22);border-radius:999px;background:rgba(255,250,240,.78);padding:6px 10px;font-weight:900;color:var(--ink)}
+    .snapshot-sample{width:min(210px,68%);justify-self:center;aspect-ratio:1/1;object-fit:cover;border:1px solid rgba(44,39,34,.62);background:var(--paper-3);box-shadow:0 12px 26px rgba(52,42,31,.14)}
+    .story-option{align-items:start}
+    .story-sample{border-top:1px solid rgba(44,39,34,.14);padding-top:13px}
+    .story-sample h3{font-family:var(--display);font-size:1.32rem;line-height:1.08;margin:0 0 8px;letter-spacing:0}
+    .story-sample p{margin:0 0 12px}
+    .story-sample .sample-origin{margin:10px 0 11px}
+    .story-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+    .story-thumbs img{width:100%;aspect-ratio:16/10;object-fit:cover;border:1px solid rgba(44,39,34,.62);background:var(--paper-3);box-shadow:0 8px 18px rgba(52,42,31,.1)}
+    .hero-proof-line{border-left:4px solid var(--mustard);padding:9px 0 9px 13px;color:var(--muted);font-weight:750}
+    @media(max-width:650px){.hero-output{gap:12px}.product-option{padding:16px}.product-option h2{font-size:1.38rem}.snapshot-sample{width:min(190px,76%)}.hero-proof-line{font-size:.92rem}}
   </style>
 </head>
 <body>
@@ -85,9 +108,45 @@
           <a class="btn secondary" href="#how">See how it works</a>
         </div>
       </div>
-      <div class="hero-frame">
-        <img src="assets/samples/cover.png" alt="Personalized illustrated story example">
-        <div class="hero-caption">Your photos show what happened. Your story brings back how it felt.</div>
+      <div class="hero-output" id="sample" aria-label="My Story product formats">
+        <article class="product-option">
+          <div>
+            <span class="product-output-type">Snapshot</span>
+            <h2>One moment illustrated.</h2>
+            <p>A single high-resolution artwork built from your photo and a few words.</p>
+          </div>
+          <img class="snapshot-sample" src="assets/samples/cover-v2.png" alt="Snapshot illustrated artwork sample">
+          <div class="product-price">$9.99</div>
+        </article>
+        <article class="product-option story-option">
+          <div>
+            <span class="product-output-type">My Story</span>
+            <h2>A memory turned into a story.</h2>
+            <p>Four connected illustrated scenes, designed as a keepsake PDF.</p>
+          </div>
+          <div class="story-sample">
+            <h3>The Summer We Saved the Moon</h3>
+            <div class="sample-origin">Started with family holiday photos + a seaside memory + a few sentences about the trip.</div>
+            <p>Became a four-scene illustrated adventure inspired by the real memory.</p>
+            <div class="story-thumbs">
+              <img src="assets/samples/page-1.png" alt="Sample story scene">
+              <img src="assets/samples/page-3.png" alt="Sample story scene">
+            </div>
+            <a class="btn secondary small" href="My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">View full sample story</a>
+          </div>
+          <div class="product-price">$19.99</div>
+        </article>
+        <div class="hero-proof-line">Start with your photos. Preview the idea. Create only when it feels right.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-kicker">Made for real life</div>
+      <h2 class="section-title">Some moments deserve more than a camera roll.</h2>
+      <div class="ideas">
+        <span class="pill">Family holidays</span><span class="pill">Birthdays</span><span class="pill">Weddings</span><span class="pill">Childhood memories</span><span class="pill">Couple trips</span><span class="pill">Family traditions</span><span class="pill">Pet memories</span><span class="pill">“Remember when...” moments</span>
       </div>
     </div>
   </section>
@@ -118,38 +177,7 @@
         <div class="step"><div class="step-num">02</div><h3>Tell us what happened</h3><p>A few sentences are enough: who was there, where you were and what made it special.</p></div>
         <div class="step"><div class="step-num">03</div><h3>We reimagine the memory</h3><p>AI turns your real photos and memory into a personalized illustrated result.</p></div>
       </div>
-      <div class="formats">
-        <div class="format"><strong>Snapshot</strong><span>One illustrated moment.</span><div class="price">$9.99 · one time</div></div>
-        <div class="format"><strong>My Story</strong><span>Cover + four-scene illustrated story + PDF.</span><div class="price">$19.99 · one time</div></div>
-      </div>
       <div class="actions"><a class="btn" href="app/index.html">Start with your photos</a></div>
-    </div>
-  </section>
-
-  <section id="sample">
-    <div class="wrap sample-layout">
-      <div class="sample-main"><img src="assets/samples/cover-v2.png" alt="The Summer We Saved the Moon illustrated story sample"></div>
-      <div class="sample-side">
-        <div class="section-kicker">Product sample</div>
-        <h3>The Summer We Saved the Moon</h3>
-        <div class="sample-origin">Started with family holiday photos + a seaside memory + a few sentences about the trip.</div>
-        <p>Became a four-scene illustrated adventure inspired by the real memory.</p>
-        <div class="mini-strip">
-          <div class="mini-panel"><img src="assets/samples/page-1.png" alt="Sample story scene"></div>
-          <div class="mini-panel"><img src="assets/samples/page-3.png" alt="Sample story scene"></div>
-        </div>
-        <div class="actions"><a class="btn" href="My_Story_4_Page_Sample.pdf" target="_blank" rel="noopener">View full sample story</a></div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <div class="section-kicker">Made for real life</div>
-      <h2 class="section-title">Some moments deserve more than a camera roll.</h2>
-      <div class="ideas">
-        <span class="pill">Family holidays</span><span class="pill">Birthdays</span><span class="pill">Weddings</span><span class="pill">Childhood memories</span><span class="pill">Couple trips</span><span class="pill">Family traditions</span><span class="pill">Pet memories</span><span class="pill">“Remember when...” moments</span>
-      </div>
     </div>
   </section>
 
