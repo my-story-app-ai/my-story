@@ -480,6 +480,20 @@ function buildPublicPreview(plan, details){
   };
 }
 
+function approveLocalPreview({plan, publicPreview, details, images=[]}){
+  if(!plan || !publicPreview || !details) return false;
+  state.lastPlan=plan;
+  state.publicPreview=publicPreview;
+  state.lastDetails=details;
+  state.lastImages=images;
+  state.lastSnapshot=null;
+  state.planRevision=state.inputRevision;
+  resetPayment();
+  configureUnlock();
+  logFunnelEvent("local_preview_approved", { imageCount: images.length });
+  return true;
+}
+
 async function callPlanner(){
   const data=collect();
   const issues=validatePreflight(data);
@@ -769,3 +783,7 @@ document.getElementById("unlockBtn").addEventListener("click",()=>{
 
 retryPlannerBtn.addEventListener("click",callPlanner);
 document.getElementById("startOverBtn").addEventListener("click",resetFlow);
+
+window.MyStoryApp = {
+  approveLocalPreview
+};

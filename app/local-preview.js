@@ -1,4 +1,6 @@
 (() => {
+  if (window.MY_STORY_CONFIG?.useLocalPreview !== true) return;
+
   const TYPE_KEYWORDS = {
     emotion: ['happy','joy','joyful','warm','love','loved','emotional','proud','excited','nervous','calm','peaceful','funny','laughed','laughter','smile','smiling','hugged','together'],
     action: ['went','played','jumped','ran','danced','swam','walked','watched','celebrated','visited','stayed','arrived','started','made','met','sat','opened','found'],
@@ -270,6 +272,109 @@
     };
   }
 
+  function buildLocalSnapshotPlan(preview, details){
+    return {
+      title: preview.title,
+      synopsis: preview.synopsis,
+      source_strategy: selectedSource()==='event'
+        ? 'Use the event photo as the primary visual source for people, setting, clothing and atmosphere.'
+        : 'Use person and place references as reconstruction anchors while following the written memory.',
+      action: preview.concept,
+      framing: 'Premium illustrated keepsake composition based on the supplied source material.',
+      emotion: preview.mood,
+      visual_anchor: preview.moment || details.storyDetail || details.place || details.occasion || 'the remembered moment'
+    };
+  }
+
+  function buildLocalStoryPlan(preview, details){
+    const labels=['Setup','Highlight','Turning point','Resolution'];
+    return {
+      title: preview.title,
+      synopsis: preview.synopsis,
+      scenes: preview.scenes.map(([number,title,label,text],index)=>({
+        title,
+        location: index===0 ? stripEnd(details.place || 'The remembered place') : `${labels[index]} environment`,
+        time: index===0 ? 'Opening moment' : labels[index],
+        action: text,
+        framing: `${label || labels[index]} composition`,
+        emotion: detectTone(details),
+        visual_anchor: stripEnd(details.storyDetail || details.storyHighlight || details.occasion || `Scene ${number}`)
+      }))
+    };
+  }
+
+  function localDetailsForPlanner(details){
+    if(selectedFormat()==='My Story'){
+      return {
+        occasion: stripEnd(details.occasion),
+        place: stripEnd(details.place),
+        memory: [
+          details.storyBeginning && `How it began: ${stripEnd(details.storyBeginning)}`,
+          details.storyHighlight && `Most memorable moment: ${stripEnd(details.storyHighlight)}`,
+          details.storyChange && `What changed: ${stripEnd(details.storyChange)}`,
+          details.storyEnding && `How it ended: ${stripEnd(details.storyEnding)}`,
+          details.storyDetail && `Detail that must not be lost: ${stripEnd(details.storyDetail)}`
+        ].filter(Boolean).join('\n'),
+        theme: details.theme,
+        tone: details.tone
+      };
+    }
+    return {
+      occasion: stripEnd(details.occasion),
+      place: stripEnd(details.place),
+      memory: stripEnd(details.memory),
+      theme: details.theme,
+      tone: details.tone
+    };
+  }
+
+  function currentImagePlaceholders(){
+    if(selectedSource()==='event'){
+      return [...($('eventPhotos')?.files || [])].slice(0,selectedFormat()==='My Story' ? 5 : 3).map((file,index)=>({
+        kind:'event',
+        label:`Event photo ${index+1}`,
+        localOnly:true,
+        name:file.name || `event-photo-${index+1}`
+      }));
+    }
+
+    const people=[...document.querySelectorAll('.person-card')].flatMap(card=>{
+      const name=card.querySelector('.person-name')?.value?.trim() || 'Person reference';
+      const file=card.querySelector('.photo-slot')?._file;
+      return file ? [{kind:'person',label:`Person reference: ${name}`,localOnly:true,name:file.name || name}] : [];
+    });
+    const placeFile=$('placePhoto')?.files?.[0];
+    return placeFile ? [...people,{kind:'place',label:'Place reference',localOnly:true,name:placeFile.name || 'place-reference'}] : people;
+  }
+
+  function approveLocalSnapshotPreview(preview, details){
+    window.MyStoryApp?.approveLocalPreview?.({
+      plan: buildLocalSnapshotPlan(preview, details),
+      publicPreview: {
+        title: preview.title,
+        synopsis: preview.synopsis,
+        concept: preview.concept,
+        mood: preview.mood,
+        styleDirection: preview.style
+      },
+      details: localDetailsForPlanner(details),
+      images: currentImagePlaceholders()
+    });
+  }
+
+  function approveLocalStoryPreview(preview, details){
+    window.MyStoryApp?.approveLocalPreview?.({
+      plan: buildLocalStoryPlan(preview, details),
+      publicPreview: {
+        title: preview.title,
+        synopsis: preview.synopsis,
+        scenes: preview.scenes.map(([,title,,text])=>({title,summary:text}))
+      },
+      details: localDetailsForPlanner(details),
+      images: currentImagePlaceholders()
+    });
+  }
+
   function renderSnapshotPreview(details){
     const preview=buildSnapshotPreview(details);
     $('previewHeading').textContent='Your memory, reimagined';
@@ -287,6 +392,7 @@
       <div class="snapshot-free-frame"><b>Your Snapshot</b><p>Your final illustration will be created after purchase.</p></div>
       <div class="preview-wide"><span>What you'll receive</span><ul><li>1 personalized illustrated image</li><li>visual direction based on your memory</li><li>digital file ready to save, share or print</li></ul></div>
     `;
+    approveLocalSnapshotPreview(preview, details);
   }
 
   function renderStoryPreview(details){
@@ -311,6 +417,7 @@
       ${preview.detail ? `<article class="preview-story-detail"><span>A detail worth keeping</span><strong>${escapeHtml(clip(preview.detail,120))}</strong></article>` : ''}
       <article class="preview-story-detail"><span>What you'll receive</span><ul><li>illustrated cover</li><li>4 personalized story scenes</li><li>consistent characters and visual world</li><li>digital story ready to save, share or print</li></ul></article>
     `;
+    approveLocalStoryPreview(preview, details);
   }
 
   function renderLocalPreview(){
