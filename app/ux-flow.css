@@ -4,6 +4,11 @@
   display:none!important;
 }
 
+/* Cross-platform display font: keep the playful desktop look without unsafe generic cursive fallbacks. */
+:root{
+  --display:"Comic Sans MS","Comic Neue","Chalkboard SE","Marker Felt",Georgia,"Times New Roman",serif;
+}
+
 /* Product names are the primary choice; product description is secondary. */
 .format-label{
   display:block;
