@@ -5,12 +5,26 @@ const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 const PLANNER_TIMEOUT_MS = 70000;
 const GENERATION_TIMEOUT_MS = 120000;
 const TOTAL_STEPS = 7;
+const DEFAULT_OUTPUT_PRESETS = {
+  Snapshot: [
+    {id:"snapshot-digital",outputType:"digital",label:"Digital",shortLabel:"Digital",description:"Optimized for screens, sharing and digital keepsakes.",resultLabel:"Digital image",downloadLabel:"Download digital image",ratio:"1:1",targetPixels:null},
+    {id:"snapshot-print-10x15",outputType:"print",label:"Print-ready 10 x 15 cm",shortLabel:"10 x 15 cm",description:"Professional print-ready file for a classic photo size.",resultLabel:"Print-ready · 10 x 15 cm",downloadLabel:"Download print file",ratio:"2:3",targetPixels:{width:1181,height:1772,dpi:300}},
+    {id:"snapshot-print-15x20",outputType:"print",label:"Print-ready 15 x 20 cm",shortLabel:"15 x 20 cm",description:"Professional print-ready file for a larger portrait keepsake.",resultLabel:"Print-ready · 15 x 20 cm",downloadLabel:"Download print file",ratio:"3:4",targetPixels:{width:1772,height:2362,dpi:300}}
+  ],
+  "My Story": [
+    {id:"story-digital",outputType:"digital",label:"Digital Story",shortLabel:"Digital Story",description:"Optimized for screen reading, saving and sharing.",resultLabel:"Digital story",downloadLabel:"Download digital story",ratio:"story",targetPixels:null},
+    {id:"story-print-30x40",outputType:"print",label:"Print-ready 30 x 40 cm",shortLabel:"30 x 40 cm",description:"Prepared as an elegant story-board print.",resultLabel:"Print-ready · 30 x 40 cm",downloadLabel:"Download print file",ratio:"3:4",targetPixels:{width:3543,height:4724,dpi:300}},
+    {id:"story-print-50x70",outputType:"print",label:"Print-ready 50 x 70 cm",shortLabel:"50 x 70 cm",description:"Prepared for a larger wall-worthy story print.",resultLabel:"Print-ready · 50 x 70 cm",downloadLabel:"Download print file",ratio:"5:7",targetPixels:{width:5906,height:8268,dpi:300}}
+  ]
+};
+const OUTPUT_PRESETS = window.MY_STORY_CONFIG?.outputPresets || DEFAULT_OUTPUT_PRESETS;
 
 const state = {
   step: 1,
   format: "Snapshot",
   mode: "Easy",
   source: "event",
+  outputPresetId: "snapshot-digital",
   generation: 0,
   sceneOverrides: {},
   scenePhotos: {},
@@ -60,10 +74,52 @@ function logFunnelEvent(name, detail={}){
     format: state.format,
     mode: state.mode,
     source: state.source,
+    outputPresetId: state.outputPresetId,
     ...detail
   };
   window.dispatchEvent(new CustomEvent("my-story:funnel", { detail: eventDetail }));
   if(window.MY_STORY_CONFIG?.debugEvents) console.debug("[My Story]", eventDetail);
+}
+
+function presetsForFormat(format=state.format){
+  return OUTPUT_PRESETS[format] || [];
+}
+
+function defaultOutputPresetId(format=state.format){
+  return presetsForFormat(format)[0]?.id || "";
+}
+
+function getOutputPreset(id=state.outputPresetId, format=state.format){
+  return presetsForFormat(format).find(preset=>preset.id===id) || presetsForFormat(format)[0] || null;
+}
+
+function ensureOutputPreset(){
+  const preset=getOutputPreset();
+  if(!preset) return null;
+  state.outputPresetId=preset.id;
+  return preset;
+}
+
+function outputTypeLabel(preset){
+  if(!preset) return "Digital";
+  return preset.outputType==="print" ? "Print-ready" : "Digital";
+}
+
+function resetDeliveryForOutputChange(){
+  state.lastSnapshot=null;
+  resetPayment();
+  hideUnlockStatus();
+}
+
+function selectOutputPreset(presetId){
+  const preset=getOutputPreset(presetId);
+  if(!preset) return;
+  if(state.outputPresetId!==preset.id){
+    state.outputPresetId=preset.id;
+    resetDeliveryForOutputChange();
+  }
+  renderOutputOptions();
+  logFunnelEvent("output_preset_selected", { outputPresetId:preset.id, outputType:preset.outputType });
 }
 
 document.addEventListener("click", e=>{
@@ -82,6 +138,7 @@ document.querySelectorAll(".format-card").forEach(card=>{
     card.classList.add("selected");
     card.querySelector(".choose-mark").textContent="Selected";
     state.format=card.dataset.format;
+    state.outputPresetId=defaultOutputPresetId(state.format);
     document.getElementById("storyModeBlock").classList.toggle("hidden", state.format!=="My Story");
     markInputsChanged();
     logFunnelEvent("format_selected", { format: state.format });
@@ -585,31 +642,69 @@ function renderPublicPreview(preview){
   document.getElementById("previewStyle").textContent=preview.styleDirection;
 }
 
+function renderOutputOptions(){
+  const container=document.getElementById("outputOptions");
+  if(!container) return;
+  const presets=presetsForFormat();
+  const selected=ensureOutputPreset();
+  container.innerHTML="";
+  presets.forEach(preset=>{
+    const card=document.createElement("button");
+    card.className=`output-option ${selected?.id===preset.id ? "selected" : ""}`.trim();
+    card.type="button";
+    card.dataset.presetId=preset.id;
+    card.setAttribute("aria-pressed", selected?.id===preset.id ? "true" : "false");
+    card.innerHTML=`
+      <span class="output-radio" aria-hidden="true"></span>
+      <span class="output-copy">
+        <strong>${escapeHtml(preset.label)}</strong>
+        <small>${escapeHtml(preset.description)}</small>
+      </span>
+    `;
+    card.addEventListener("click",()=>selectOutputPreset(preset.id));
+    container.appendChild(card);
+  });
+
+  const note=document.getElementById("outputNote");
+  if(note && selected){
+    note.textContent=selected.outputType==="print"
+      ?"Prepared for professional printing with a print-safe composition."
+      :"Optimized for screens, sharing and digital download.";
+  }
+}
+
 function configureUnlock(){
   const isStory=state.format==="My Story";
+  const preset=ensureOutputPreset();
+  renderOutputOptions();
   document.getElementById("unlockHeading").textContent=isStory
     ?"Your story is ready to be illustrated."
     :"Your memory is ready to become an illustration.";
   document.getElementById("unlockIntro").textContent=isStory
-    ?"We have the memory, photo source and story preview. The next step is paid generation."
-    :"We have the memory, photo source and creative preview. The next step is paid generation.";
+    ?"Choose the final file you want, then continue to paid generation."
+    :"Choose the final file you want, then continue to paid generation.";
   document.getElementById("unlockBenefits").innerHTML=isStory
-    ?"<li>4 illustrated scenes</li><li>Consistent visual storytelling</li><li>Downloadable story PDF</li>"
-    :"<li>1 final illustrated image</li><li>High-resolution download</li><li>Personalized from your photos and memory</li>";
+    ?"<li>4 illustrated scenes</li><li>Consistent visual storytelling</li><li>Digital or print-ready delivery</li>"
+    :"<li>1 final illustrated image</li><li>Digital or print-ready delivery</li><li>Personalized from your photos and memory</li>";
   document.getElementById("unlockPrice").textContent=isStory
     ?"$19.99 · one-time payment"
     :"$9.99 · one-time payment";
   document.getElementById("unlockBtn").textContent=isStory
     ?"Create my Story — $19.99"
     :"Create my Snapshot — $9.99";
+  logFunnelEvent("unlock_configured", { outputPresetId:preset?.id || null, outputType:preset?.outputType || null });
   hideUnlockStatus();
 }
 
 function approvedPackage(){
+  const outputPreset=ensureOutputPreset();
   return {
     format:state.format,
     mode:state.mode,
     source:state.source,
+    outputPresetId:outputPreset?.id || "",
+    outputType:outputPreset?.outputType || "digital",
+    outputPreset,
     details:state.lastDetails,
     plan:state.lastPlan,
     publicPreview:state.publicPreview,
@@ -646,8 +741,9 @@ async function generateSnapshot(){
       logFunnelEvent("story_generation_placeholder_viewed");
       return;
     }
-    showGenerationStatus("Generating Snapshot...","");
-    logFunnelEvent("snapshot_generation_started");
+    const preset=ensureOutputPreset();
+    showGenerationStatus(preset?.outputType==="print" ? "Generating print-safe Snapshot master..." : "Generating digital Snapshot...","");
+    logFunnelEvent("snapshot_generation_started", { outputPresetId:preset?.id || null, outputType:preset?.outputType || null });
     const payload=await fetchJsonWithTimeout(snapshotApiUrl,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -663,6 +759,7 @@ async function generateSnapshot(){
     document.getElementById("generatingState").classList.add("hidden");
     document.getElementById("resultState").classList.remove("hidden");
     document.getElementById("resultPlanTitle").textContent=state.lastPlan?.title || "Snapshot generation";
+    document.getElementById("resultOutputMeta").textContent=getOutputPreset()?.resultLabel || "";
     document.getElementById("resultSummary").textContent="The approved creative plan is safe. Generation can be retried without changing your inputs.";
     showGenerationStatus(`Snapshot generation error: ${error.message}`,"error");
     logFunnelEvent("snapshot_generation_failed", { status: error?.status || null, message: error?.message || "Generation failed" });
@@ -670,29 +767,36 @@ async function generateSnapshot(){
 }
 
 function renderSnapshotResult(payload){
+  const preset=payload.outputPreset || getOutputPreset();
   document.getElementById("fakeProgress").style.width="100%";
   document.getElementById("generatingState").classList.add("hidden");
   document.getElementById("resultState").classList.remove("hidden");
-  document.getElementById("resultFormatLabel").textContent="SNAPSHOT";
+  document.getElementById("resultFormatLabel").textContent=`SNAPSHOT · ${outputTypeLabel(preset).toUpperCase()}`;
   document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
-  document.getElementById("resultSummary").textContent="Your generated Snapshot is ready.";
+  document.getElementById("resultOutputMeta").textContent=preset?.resultLabel || "Digital image";
+  document.getElementById("resultSummary").textContent=preset?.outputType==="print"
+    ?"Your Snapshot master is ready for the selected print-ready export path."
+    :"Your generated Snapshot is ready.";
   const img=document.getElementById("generatedImage");
   img.src=payload.image.dataUrl;
   img.alt=state.lastPlan.title;
   const link=document.getElementById("downloadImageLink");
   link.href=payload.image.dataUrl;
-  link.download=`${slugify(state.lastPlan.title)}.png`;
+  link.download=`${slugify(state.lastPlan.title)}-${preset?.id || "snapshot-digital"}.png`;
+  link.textContent=preset?.downloadLabel || "Download image";
   link.classList.remove("hidden");
-  showGenerationStatus(`Generated with ${payload.model || "the Snapshot image model"}.`,"success");
+  showGenerationStatus(`Generated with ${payload.model || "the Snapshot image model"}. ${preset?.resultLabel || "Digital image"}.`,"success");
 }
 
 function renderStoryApproved(){
+  const preset=getOutputPreset();
   document.getElementById("generatingState").classList.add("hidden");
   document.getElementById("resultState").classList.remove("hidden");
-  document.getElementById("resultFormatLabel").textContent="MY STORY";
+  document.getElementById("resultFormatLabel").textContent=`MY STORY · ${outputTypeLabel(preset).toUpperCase()}`;
   document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
-  document.getElementById("resultSummary").textContent="Story generation is gated and ready for the next production phase.";
-  showGenerationStatus("Story generation will be connected after payment and image/PDF generation are wired.","success");
+  document.getElementById("resultOutputMeta").textContent=preset?.resultLabel || "Digital story";
+  document.getElementById("resultSummary").textContent="Story generation is gated and ready for the scene generation and layout renderer phase.";
+  showGenerationStatus("Story output will be created from four scene masters plus a final layout renderer after payment and generation are wired.","success");
 }
 
 function resetFlow(){
@@ -709,6 +813,7 @@ function resetFlow(){
   state.format="Snapshot";
   state.mode="Easy";
   state.source="event";
+  state.outputPresetId="snapshot-digital";
   state.generation=0;
   state.sceneOverrides={};
   state.scenePhotos={};

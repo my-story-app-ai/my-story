@@ -33,7 +33,7 @@
       <li data-step="3" data-title="Add photos"><span>3</span><b>Photos</b></li>
       <li data-step="4" data-title="Describe memory"><span>4</span><b>Memory</b></li>
       <li data-step="5" data-title="Free preview"><span>5</span><b>Preview</b></li>
-      <li data-step="6" data-title="Unlock"><span>6</span><b>Unlock</b></li>
+      <li data-step="6" data-title="Choose output"><span>6</span><b>Output</b></li>
       <li data-step="7" data-title="Your result"><span>7</span><b>Result</b></li>
     </ol>
     <div class="progress"><span id="progressBar"></span></div>
@@ -161,6 +161,11 @@
     <section class="panel" data-panel="6">
       <div class="unlock-card">
         <div class="panel-head"><div><div class="kicker">Step 6 of 7</div><h2 id="unlockHeading">Unlock your memory</h2><p id="unlockIntro">Checkout integration is coming next.</p></div></div>
+        <div class="output-choice">
+          <div class="kicker">Choose output file</div>
+          <div class="output-options" id="outputOptions"></div>
+          <p class="output-note" id="outputNote">You can keep it digital or choose a print-ready file.</p>
+        </div>
         <ul id="unlockBenefits"></ul>
         <div class="unlock-price" id="unlockPrice">$9.99 · one-time payment</div>
         <button class="primary-btn unlock-btn" id="unlockBtn" type="button">Create my Snapshot — $9.99</button>
@@ -172,8 +177,8 @@
     <section class="panel" data-panel="7">
       <div id="generatingState" class="generating"><div class="loader"></div><h2>Generating...</h2><p>This usually takes a moment.</p><div class="fake-progress"><span id="fakeProgress"></span></div></div>
       <div id="resultState" class="hidden">
-        <div class="result-head"><div><div class="kicker">Step 7 of 7</div><h2>Your result</h2><p>Download the image or go back to adjust the preview.</p></div><span class="demo-tag">v0.8</span></div>
-        <div class="result-layout"><div class="generated-frame"><img id="generatedImage" alt=""></div><div class="result-copy"><span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span><h3 id="resultPlanTitle"></h3><p id="resultSummary"></p><a class="primary-btn link-btn hidden" id="downloadImageLink" href="#" download="my-story-snapshot.png">Download image</a></div></div>
+        <div class="result-head"><div><div class="kicker">Step 7 of 7</div><h2>Your result</h2><p>Download your chosen output or go back to adjust the preview.</p></div><span class="demo-tag">v0.8</span></div>
+        <div class="result-layout"><div class="generated-frame"><img id="generatedImage" alt=""></div><div class="result-copy"><span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span><h3 id="resultPlanTitle"></h3><p id="resultOutputMeta" class="result-output-meta"></p><p id="resultSummary"></p><a class="primary-btn link-btn hidden" id="downloadImageLink" href="#" download="my-story-snapshot.png">Download image</a></div></div>
         <div id="generationStatus" class="planner-status hidden"></div>
         <div class="actions"><button class="secondary-btn" id="startOverBtn" type="button">Start another</button><button class="primary-btn" data-back="5" type="button">Back to preview</button></div>
       </div>

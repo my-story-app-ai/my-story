@@ -31,14 +31,15 @@
     .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.step{background:rgba(255,250,240,.68);border:2px solid var(--line);padding:20px;min-height:165px}.step-num{font-family:Georgia,serif;font-weight:900;font-size:1.3rem;color:var(--accent-dark)}.step h3{margin:9px 0 6px;font-family:Georgia,serif;font-size:1.3rem}.step p{margin:0;color:var(--muted);font-size:.92rem}
     .sample-layout{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:center}.sample-main{transform:rotate(-.5deg)}.sample-side h3{font-family:Georgia,serif;font-size:2rem;line-height:1.05;margin:0 0 12px}.sample-side p{color:var(--muted)}.sample-origin{border-left:4px solid var(--mustard);padding:10px 0 10px 14px;margin:16px 0;font-weight:750}.mini-strip{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini-panel{background:var(--paper-3);padding:6px;border:2px solid var(--line);aspect-ratio:16/10;overflow:hidden}.mini-panel img{width:100%;height:100%;object-fit:cover;border:1px solid var(--line)}
     .ideas{display:flex;gap:9px;flex-wrap:wrap}.pill{border:2px solid var(--line);background:var(--paper-3);padding:8px 12px;border-radius:999px;font-weight:700;font-size:.9rem}
+    .print-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.print-card{border:1px solid rgba(44,39,34,.58);background:rgba(255,250,240,.72);padding:20px;box-shadow:0 14px 32px rgba(52,42,31,.1)}.print-card h3{font-family:var(--display);font-size:1.35rem;line-height:1.08;margin:0 0 8px}.print-card p{color:var(--muted);margin:0 0 13px}.print-sizes{display:flex;gap:8px;flex-wrap:wrap}.print-sizes span{border:1px solid rgba(44,39,34,.24);border-radius:999px;background:rgba(244,236,217,.72);padding:6px 10px;font-weight:850;font-size:.9rem}
     .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}details{background:rgba(255,250,240,.72);border:2px solid var(--line);padding:16px 18px}summary{cursor:pointer;font-weight:800}details p{color:var(--muted);margin-bottom:0}
     .final-cta{background:var(--paper-3);border:3px solid var(--line);box-shadow:7px 7px 0 rgba(44,39,34,.92);padding:30px;display:flex;justify-content:space-between;gap:22px;align-items:center}.final-cta h3{font-family:Georgia,serif;font-size:2rem;margin:0 0 6px}.final-cta p{margin:0;color:var(--muted);max-width:680px}
     .welcome-modal[hidden]{display:none}.welcome-modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:14px;background:rgba(36,31,26,.2);backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}.welcome-card{position:relative;width:86vw;max-width:520px;max-height:calc(100vh - 28px);overflow:auto;border:3px solid rgba(44,39,34,.78);background-color:rgba(255,250,240,.94);background-image:repeating-linear-gradient(0deg,rgba(70,54,35,.018) 0,rgba(70,54,35,.018) 1px,transparent 1px,transparent 4px);box-shadow:8px 8px 0 rgba(44,39,34,.72);padding:22px;text-align:center}.welcome-close{position:absolute;right:10px;top:10px;width:34px;height:34px;border:0;background:transparent;color:var(--muted);font-size:1.45rem;line-height:1;cursor:pointer}.welcome-logo{width:min(280px,74%);height:auto;object-fit:contain;margin:0 auto 14px}.welcome-card h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.65rem,5.8vw,2.35rem);line-height:1.04;letter-spacing:-.035em;margin:0 18px 14px}.welcome-card p{margin:0 auto 8px;color:var(--muted);font-size:1rem;max-width:410px}.welcome-actions{display:grid;gap:10px;margin:20px 0 8px}.welcome-actions .btn{width:100%}.welcome-link{border:0;background:transparent;color:var(--accent-dark);font-weight:850;text-decoration:underline;text-underline-offset:4px;min-height:40px;cursor:pointer}.welcome-price{font-size:.9rem;color:var(--muted);font-weight:750}
     footer{border-top:1px solid rgba(44,39,34,.16);padding:26px 0 36px;color:var(--muted);font-size:.9rem}.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer-links{display:flex;gap:16px;flex-wrap:wrap}.footer-links a{text-decoration:none}
-    @media(max-width:900px){.hero-grid,.why-grid,.sample-layout,.faq{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.hero-frame,.sample-main{transform:none}}
+    @media(max-width:900px){.hero-grid,.why-grid,.sample-layout,.faq,.print-grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.hero-frame,.sample-main{transform:none}}
     @media(max-width:650px){.wrap{width:min(100% - 20px,1160px)}.navlinks a:not(.btn){display:none}nav{height:62px}.hero{padding:44px 0 34px}h1{font-size:3.15rem}.lead{font-size:1rem}.actions{display:grid;grid-template-columns:1fr}.btn{width:100%}.hero-frame{box-shadow:5px 5px 0 rgba(44,39,34,.92)}section{padding:44px 0}.mini-strip{grid-template-columns:1fr 1fr}.final-cta{flex-direction:column;align-items:flex-start}.welcome-modal{padding:0}.welcome-card{width:86vw;max-width:390px;padding:18px 16px 16px;box-shadow:5px 5px 0 rgba(44,39,34,.7)}.welcome-logo{width:min(220px,76%);margin-bottom:12px}.welcome-card h2{font-size:1.55rem}.welcome-card p{font-size:.96rem}.welcome-actions{margin-top:16px}}
     :root{--display:"Comic Sans MS","Comic Neue","Chalkboard SE","Marker Felt",Georgia,"Times New Roman",serif}
-    .why-card h3,.step h3,.sample-side h3,.final-cta h3{font-family:var(--display);font-weight:800;letter-spacing:0;line-height:1.08}
+    .why-card h3,.step h3,.sample-side h3,.final-cta h3,.print-card h3{font-family:var(--display);font-weight:800;letter-spacing:0;line-height:1.08}
     .step-num{font-family:var(--display);letter-spacing:0}
     .btn{border:0;border-radius:999px;background:linear-gradient(180deg,#bd5a49,#9f3f35);color:#fffaf0;box-shadow:0 14px 28px rgba(127,48,41,.22),0 1px 0 rgba(255,255,255,.18) inset}
     .btn:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(127,48,41,.25),0 1px 0 rgba(255,255,255,.2) inset}
@@ -101,7 +102,7 @@
       <div>
         <div class="eyebrow">Personalized illustrated memories</div>
         <h1>A photo remembers the scene.<br><em>A story remembers the feeling.</em></h1>
-        <p class="lead">Upload a photo, tell us what made it special, and turn it into an illustrated memory.</p>
+        <p class="lead">Upload a photo, tell us what made it special, and turn it into an illustrated memory you can download, share or prepare for print.</p>
         <div class="hero-note">Because twenty years from now, the photo may still be there — but the feeling may not.</div>
         <div class="actions">
           <a class="btn" href="app/index.html">Create your story</a>
@@ -112,8 +113,8 @@
         <article class="product-option">
           <div>
             <span class="product-output-type">Snapshot</span>
-            <h2>One moment illustrated.</h2>
-            <p>A single high-resolution artwork built from your photo and a few words.</p>
+            <h2>One moment, made to keep.</h2>
+            <p>Personalized illustrated memory, ready to download, share or print.</p>
           </div>
           <img class="snapshot-sample" src="assets/samples/cover-v2.png" alt="Snapshot illustrated artwork sample">
           <div class="product-price">$9.99</div>
@@ -121,8 +122,8 @@
         <article class="product-option story-option">
           <div>
             <span class="product-output-type">My Story</span>
-            <h2>A memory turned into a story.</h2>
-            <p>Four connected illustrated scenes, designed as a keepsake PDF.</p>
+            <h2>Your memory, told as a visual story.</h2>
+            <p>A connected illustrated keepsake, ready for screen or wall.</p>
           </div>
           <div class="story-sample">
             <h3>The Summer We Saved the Moon</h3>
@@ -136,6 +137,26 @@
           </div>
           <div class="product-price">$19.99</div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-kicker">Digital and print-ready</div>
+      <h2 class="section-title">From screen to something you can keep.</h2>
+      <p class="section-copy">Every My Story creation comes as a digital download. You can also choose a print-ready format and take the file to any printing service you like.</p>
+      <div class="print-grid">
+        <div class="print-card">
+          <h3>Snapshot formats</h3>
+          <p>One illustrated memory for your phone, your feed or a small print.</p>
+          <div class="print-sizes"><span>Digital</span><span>10 x 15 cm</span><span>15 x 20 cm</span></div>
+        </div>
+        <div class="print-card">
+          <h3>Story formats</h3>
+          <p>A four-scene visual story for reading, saving or putting on the wall.</p>
+          <div class="print-sizes"><span>Digital Story</span><span>30 x 40 cm</span><span>50 x 70 cm</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -198,7 +219,7 @@
   <section>
     <div class="wrap">
       <div class="final-cta">
-        <div><div class="section-kicker">Keep more than the picture</div><h3>Your photos are already there. Save the feeling too.</h3><p>Turn the photos you already have into a story you’ll still want to open years from now.</p></div>
+        <div><div class="section-kicker">Keep more than the picture</div><h3>Your photos are already there. Save the feeling too.</h3><p>Turn the photos you already have into a digital or print-ready memory you’ll still want to open years from now.</p></div>
         <a class="btn" href="app/index.html">Create your story</a>
       </div>
     </div>
@@ -207,7 +228,7 @@
 
 <footer>
   <div class="wrap footer-row">
-    <div>© 2026 My Story. Personalized digital storytelling.</div>
+    <div>© 2026 My Story. Personalized digital and print-ready storytelling.</div>
     <div class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="refund.html">Refund policy</a></div>
   </div>
 </footer>
