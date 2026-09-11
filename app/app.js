@@ -295,6 +295,7 @@ function collect(){
     })).filter(p=>p.name),
     occasion:document.getElementById("occasion").value.trim(),
     place:place || reconstructPlace,
+    placeLocation:window.MyStoryPlace?.getSelection() || null,
     memory:String(plannerMemory).trim(),
     theme:document.getElementById("theme").value,
     tone:document.getElementById("tone").value
@@ -869,6 +870,7 @@ function renderSnapshotResult(payload){
 }
 
 function resetFlow(){
+  window.MyStoryPlace?.reset();
   storyCache={key:null, scenes:[]};
   if(storyDownloadUrl) URL.revokeObjectURL(storyDownloadUrl);
   storyDownloadUrl=null;

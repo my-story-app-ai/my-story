@@ -522,6 +522,18 @@ body{
   justify-content:center;
   border-radius:999px;
 }
+.place-field{position:relative;min-width:0}
+.place-suggestions{position:absolute;top:100%;left:0;right:0;z-index:20;background:#fffaf0;border:1px solid #72685a;box-shadow:3px 4px 0 rgba(40,36,31,.18);border-radius:4px;padding:4px;max-height:260px;overflow:auto}
+.place-suggestions[hidden],.place-selection[hidden]{display:none}
+.place-suggestions ul{list-style:none;margin:0;padding:0}
+.place-suggestions li{padding:12px 10px;min-height:44px;font:400 15px/1.4 sans-serif;color:#28241f;cursor:pointer;overflow-wrap:anywhere}
+.place-suggestions li:hover,.place-suggestions li[aria-selected="true"]{background:#f1e1c1}
+.place-suggestions a{display:block;padding:8px 10px;font:400 12px/1.4 sans-serif;color:#675b4d}
+.place-selection{display:flex;align-items:center;gap:8px;font:400 13px/1.4 sans-serif;color:#5b5145;overflow-wrap:anywhere}
+.place-selection span{flex:1;min-width:0}
+.place-selection button{flex:none;min-width:44px;min-height:44px;border:0;background:transparent;color:#5b5145;font-size:24px;padding:4px;cursor:pointer}
+.place-search-status{font:400 12px/1.4 sans-serif;color:#675b4d;margin-top:4px}
+.place-search-status:empty{display:none}
 .actions{
   border-top:1px solid rgba(64,56,47,.12);
   padding-top:18px;

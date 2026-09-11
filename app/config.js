@@ -6,6 +6,8 @@ window.MY_STORY_CONFIG = {
   useLocalPreview: true,
   devBypassPayment: false,
   debugEvents: false,
+  // Browser key: restrict allowed origins in Geoapify before enabling.
+  geoapifyApiKey: "5481590688004e2ba6b4b560f3063134",
   outputPresets: {
     Snapshot: [
       {

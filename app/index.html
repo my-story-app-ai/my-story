@@ -98,7 +98,7 @@
 
       <div class="form-grid">
         <label>Occasion<input id="occasion" type="text" placeholder="e.g. Summer holiday, 10th birthday"></label>
-        <label>Place<input id="place" type="text" placeholder="e.g. Kotor, Montenegro"></label>
+        <div class="place-field"><label>Place<input id="place" type="text" placeholder="e.g. Kotor, Montenegro"></label><div id="placeSuggestions" class="place-suggestions" hidden></div><div id="placeSelection" class="place-selection" hidden></div><div id="placeSearchStatus" class="place-search-status" role="status" aria-live="polite"></div></div>
 
         <label id="snapshotMemoryBlock" class="full">What do you remember most?
           <textarea id="memory" rows="5" placeholder="What happened — and what made it feel special? A joke, a small detail, the mood, the excitement, the chaos..."></textarea>
@@ -188,6 +188,7 @@
 </main>
 
 <script src="config.js"></script>
+<script src="place-autocomplete.js"></script>
 <script src="vendor/pdf-lib.min.js"></script>
 <script src="story-output.js"></script>
 <script src="app.js"></script>
