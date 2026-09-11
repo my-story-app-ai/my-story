@@ -768,24 +768,30 @@ async function generateSnapshot(){
 
 function renderSnapshotResult(payload){
   const preset=payload.outputPreset || getOutputPreset();
+  const delivery=payload.delivery || {};
+  const image=payload.image || {};
   document.getElementById("fakeProgress").style.width="100%";
   document.getElementById("generatingState").classList.add("hidden");
   document.getElementById("resultState").classList.remove("hidden");
   document.getElementById("resultFormatLabel").textContent=`SNAPSHOT · ${outputTypeLabel(preset).toUpperCase()}`;
   document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
   document.getElementById("resultOutputMeta").textContent=preset?.resultLabel || "Digital image";
-  document.getElementById("resultSummary").textContent=preset?.outputType==="print"
-    ?"Your Snapshot master is ready for the selected print-ready export path."
+  document.getElementById("resultSummary").textContent=delivery.exportStatus==="print_ready"
+    ?"Your Snapshot print-ready file is ready to download."
     :"Your generated Snapshot is ready.";
   const img=document.getElementById("generatedImage");
-  img.src=payload.image.dataUrl;
+  img.src=image.dataUrl;
   img.alt=state.lastPlan.title;
   const link=document.getElementById("downloadImageLink");
-  link.href=payload.image.dataUrl;
-  link.download=`${slugify(state.lastPlan.title)}-${preset?.id || "snapshot-digital"}.png`;
+  const extension=image.extension || fileExtensionFromMime(image.mimeType) || "png";
+  link.href=image.dataUrl;
+  link.download=`${slugify(state.lastPlan.title)}-${preset?.id || "snapshot-digital"}.${extension}`;
   link.textContent=preset?.downloadLabel || "Download image";
   link.classList.remove("hidden");
-  showGenerationStatus(`Generated with ${payload.model || "the Snapshot image model"}. ${preset?.resultLabel || "Digital image"}.`,"success");
+  const exportNote=delivery.actualPixels
+    ? `${delivery.actualPixels.width} x ${delivery.actualPixels.height}px at ${delivery.actualPixels.dpi || 300} DPI.`
+    : preset?.resultLabel || "Digital image.";
+  showGenerationStatus(`Generated with ${payload.model || "the Snapshot image model"}. ${exportNote}`,"success");
 }
 
 function renderStoryApproved(){
@@ -853,6 +859,13 @@ function escapeHtml(value=""){
 
 function slugify(value){
   return String(value || "my-story-snapshot").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "my-story-snapshot";
+}
+
+function fileExtensionFromMime(mimeType=""){
+  if(mimeType==="image/jpeg") return "jpg";
+  if(mimeType==="image/png") return "png";
+  if(mimeType==="application/pdf") return "pdf";
+  return "";
 }
 
 document.getElementById("planBtn").addEventListener("click",callPlanner);
