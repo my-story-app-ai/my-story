@@ -56,6 +56,7 @@ const snapshotApiUrl = window.MY_STORY_CONFIG?.snapshotGenerationApi || "/api/sn
 const devBypassPayment = window.MY_STORY_CONFIG?.devBypassPayment === true;
 
 function gotoStep(step){
+  if(typeof generationBusy!=="undefined" && generationBusy && step!==7) return;
   state.step = step;
   panels.forEach(p => p.classList.toggle("active", Number(p.dataset.panel) === step));
   navItems.forEach(n => n.classList.toggle("active", Number(n.dataset.step) === step));
@@ -715,7 +716,74 @@ function approvedPackage(){
   };
 }
 
+let generationBusy=false;
+let storyCache={key:null, scenes:[]};
+let storyDownloadUrl=null;
+
+const continuityFields=['character_continuity','visual_style','world_continuity'];
+function hasStoryContinuity(plan){
+  return continuityFields.every(key=>hasText(plan?.[key]) && plan[key].length<=1800);
+}
+
+async function requestStory(request){
+  const serialized=JSON.stringify(request);
+  if(new Blob([serialized]).size>4000000) throw new Error('Photos are too large. Please use smaller photos.');
+  return fetchJsonWithTimeout(window.MY_STORY_CONFIG?.storyRenderApi || '/api/story-render', {
+    method:'POST',headers:{'Content-Type':'application/json'},body:serialized
+  },GENERATION_TIMEOUT_MS);
+}
+
+async function generateStory(){
+  const body=approvedPackage();
+  const key=JSON.stringify({plan:body.plan, details:body.details, images:body.images, source:body.source});
+  if(storyCache.key!==key) storyCache={key, scenes:[]};
+  if(!storyCache.continuity){
+    if(hasStoryContinuity(body.plan)){
+      storyCache.continuity=Object.fromEntries(continuityFields.map(key=>[key,body.plan[key]]));
+    }else{
+      document.querySelector('#generatingState p').textContent='Preparing your illustrations...';
+      const prepared=await requestStory({...body,stage:'continuity'});
+      if(!hasStoryContinuity(prepared.continuity)) throw new Error('Story preparation was incomplete. Please try again.');
+      storyCache.continuity=Object.fromEntries(continuityFields.map(key=>[key,prepared.continuity[key]]));
+    }
+  }
+  const generationPlan={...body.plan,...storyCache.continuity};
+  for(let index=0; index<4; index++){
+    if(storyCache.scenes[index]) continue;
+    document.querySelector('#generatingState p').textContent=`Illustrating scene ${index+1} of 4. This can take a few minutes.`;
+    document.getElementById('fakeProgress').style.width=`${10+index*20}%`;
+    const request={...body,plan:generationPlan, sceneIndex:index, continuityImage:index ? storyCache.scenes[0].dataUrl : undefined};
+    const payload=await requestStory(request);
+    if(payload.sceneIndex!==index || !/^data:image\/jpeg;base64,[A-Za-z0-9+/]+=*$/.test(payload.image?.dataUrl || '')) throw new Error('The scene service returned an invalid image. Please try again.');
+    const decoded=new Image();
+    decoded.src=payload.image.dataUrl;
+    await decoded.decode();
+    storyCache.scenes[index]=payload.image;
+  }
+  document.querySelector('#generatingState p').textContent='Preparing your story PDF...';
+  const preset=getOutputPreset();
+  const publicPlan={title:body.publicPreview.title, scenes:body.publicPreview.scenes};
+  const output=await window.MyStoryOutput.build(publicPlan, storyCache.scenes, preset);
+  if(storyDownloadUrl) URL.revokeObjectURL(storyDownloadUrl);
+  storyDownloadUrl=URL.createObjectURL(output.blob);
+  document.getElementById('fakeProgress').style.width='100%';
+  document.getElementById('generatingState').classList.add('hidden');
+  document.getElementById('resultState').classList.remove('hidden');
+  document.getElementById('resultFormatLabel').textContent='MY STORY';
+  document.getElementById('resultPlanTitle').textContent=body.plan.title;
+  document.getElementById('resultOutputMeta').textContent=preset.resultLabel;
+  document.getElementById('resultSummary').textContent=preset.outputType==='print' ? 'Your four-scene story is ready to print. Choose Actual size when printing your PDF.' : 'Your story is ready: a cover and four illustrated scenes.';
+  document.getElementById('generatedImage').src=output.preview;
+  document.getElementById('generatedImage').alt=body.plan.title;
+  const link=document.getElementById('downloadImageLink');
+  link.href=storyDownloadUrl;
+  link.download=`${slugify(body.plan.title)}-${preset.id}.pdf`;
+  link.textContent='Download story PDF';
+  link.classList.remove('hidden');
+}
+
 async function generateSnapshot(){
+  if(generationBusy) return;
   if(!hasApprovedPreview()){
     showPlannerStatus("Build the free preview first.","error");
     gotoStep(4);
@@ -727,6 +795,9 @@ async function generateSnapshot(){
     showUnlockStatus("Checkout integration is coming next. Generation stays locked until payment is connected.","error");
     return;
   }
+  generationBusy=true;
+  document.getElementById('retryGenerationBtn').classList.add('hidden');
+  document.querySelector('#generatingState p').textContent='This usually takes a moment.';
   gotoStep(7);
   hideGenerationStatus();
   document.getElementById("generatingState").classList.remove("hidden");
@@ -737,8 +808,8 @@ async function generateSnapshot(){
 
   try{
     if(state.format!=="Snapshot"){
-      renderStoryApproved();
-      logFunnelEvent("story_generation_placeholder_viewed");
+      await generateStory();
+      logFunnelEvent("story_generation_succeeded");
       return;
     }
     const preset=ensureOutputPreset();
@@ -761,8 +832,11 @@ async function generateSnapshot(){
     document.getElementById("resultPlanTitle").textContent=state.lastPlan?.title || "Snapshot generation";
     document.getElementById("resultOutputMeta").textContent=getOutputPreset()?.resultLabel || "";
     document.getElementById("resultSummary").textContent="The approved creative plan is safe. Generation can be retried without changing your inputs.";
-    showGenerationStatus(`Snapshot generation error: ${error.message}`,"error");
+    showGenerationStatus(`${state.format} generation error: ${error.message}`,"error");
+    document.getElementById('retryGenerationBtn').classList.remove('hidden');
     logFunnelEvent("snapshot_generation_failed", { status: error?.status || null, message: error?.message || "Generation failed" });
+  }finally{
+    generationBusy=false;
   }
 }
 
@@ -794,18 +868,10 @@ function renderSnapshotResult(payload){
   showGenerationStatus(`Generated with ${payload.model || "the Snapshot image model"}. ${exportNote}`,"success");
 }
 
-function renderStoryApproved(){
-  const preset=getOutputPreset();
-  document.getElementById("generatingState").classList.add("hidden");
-  document.getElementById("resultState").classList.remove("hidden");
-  document.getElementById("resultFormatLabel").textContent=`MY STORY · ${outputTypeLabel(preset).toUpperCase()}`;
-  document.getElementById("resultPlanTitle").textContent=state.lastPlan.title;
-  document.getElementById("resultOutputMeta").textContent=preset?.resultLabel || "Digital story";
-  document.getElementById("resultSummary").textContent="Story generation is gated and ready for the scene generation and layout renderer phase.";
-  showGenerationStatus("Story output will be created from four scene masters plus a final layout renderer after payment and generation are wired.","success");
-}
-
 function resetFlow(){
+  storyCache={key:null, scenes:[]};
+  if(storyDownloadUrl) URL.revokeObjectURL(storyDownloadUrl);
+  storyDownloadUrl=null;
   document.querySelectorAll("input, textarea").forEach(input=>{
     if(input.type==="file" || input.tagName==="TEXTAREA" || input.type==="text") input.value="";
   });
@@ -900,6 +966,7 @@ document.getElementById("unlockBtn").addEventListener("click",()=>{
 });
 
 retryPlannerBtn.addEventListener("click",callPlanner);
+document.getElementById('retryGenerationBtn').addEventListener('click',generateSnapshot);
 document.getElementById("startOverBtn").addEventListener("click",resetFlow);
 
 window.MyStoryApp = {

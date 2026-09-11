@@ -180,6 +180,7 @@
         <div class="result-head"><div><div class="kicker">Step 7 of 7</div><h2>Your result</h2><p>Download your chosen output or go back to adjust the preview.</p></div><span class="demo-tag">v0.8</span></div>
         <div class="result-layout"><div class="generated-frame"><img id="generatedImage" alt=""></div><div class="result-copy"><span class="placeholder-label" id="resultFormatLabel">SNAPSHOT</span><h3 id="resultPlanTitle"></h3><p id="resultOutputMeta" class="result-output-meta"></p><p id="resultSummary"></p><a class="primary-btn link-btn hidden" id="downloadImageLink" href="#" download="my-story-snapshot.png">Download image</a></div></div>
         <div id="generationStatus" class="planner-status hidden"></div>
+        <button id="retryGenerationBtn" class="secondary-btn hidden" type="button">Try again</button>
         <div class="actions"><button class="secondary-btn" id="startOverBtn" type="button">Start another</button><button class="primary-btn" data-back="5" type="button">Back to preview</button></div>
       </div>
     </section>
@@ -187,6 +188,8 @@
 </main>
 
 <script src="config.js"></script>
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="story-output.js"></script>
 <script src="app.js"></script>
 <script>
 (() => {
